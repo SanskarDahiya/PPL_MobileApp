@@ -41,7 +41,7 @@ const ProfileHomeDivider = (props) => {
         options={{
           title: "",
           headerStyle: {
-            height: 0,
+            // height: 0,
           },
         }}
       />

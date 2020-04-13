@@ -29,9 +29,11 @@ const POSTWRAPPER = (originalprops) => {
     UpdateDataAtRedux();
   }, [props]);
   // convert nanosecond to datetime
-  let postDateTime = new Date();
-  if (props.createdDate)
-    postDateTime = new Date(props.createdDate._seconds * 1000);
+  let postDateTime = new Date(0);
+  if (props.createdDate) {
+    // postDateTime = new Date(props.createdDate._seconds * 1000);
+    postDateTime.setSeconds(props.createdDate._seconds + 5 * 60 * 60 + 30 * 60);
+  }
 
   // Setting photo height
   const screenWidth = Math.round(Dimensions.get("window").width);
@@ -115,6 +117,7 @@ const POSTWRAPPER = (originalprops) => {
           break;
         default:
           console.log("No Action for id", name);
+          alert("We are working on it.");
           break;
       }
     } catch (err) {}
