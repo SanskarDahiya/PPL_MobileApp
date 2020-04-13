@@ -5,6 +5,7 @@ import Cstmtextbox from "./Cstmtextbox";
 import { SignupCall } from "../AxiosCalls";
 import { connect } from "react-redux";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
+import { addDataToStorage } from "../asyncStorage";
 
 function Login(props) {
   let isUserLogging = false;
@@ -81,13 +82,13 @@ function Login(props) {
         passwordAlertUpdater("");
         usernameAlertUpdater("");
         let {
-          data: { result = false }
+          data: { result = false },
         } = await SignupCall({
           username,
           password,
           firstname: fName,
           lastname: lName,
-          email
+          email,
         });
         console.log(result, "<<<");
         if (result) {
@@ -95,7 +96,10 @@ function Login(props) {
             usernameAlertUpdater("Username or Email Already Exists");
             emailAlertUpdater("Username or Email Already Exists");
           } else {
-            console.log("Register Sucessfull");
+            console.log("Register Sucessfull", result);
+            props.setZIndex(-1);
+            await addDataToStorage(JSON.stringify(result));
+            props.getData(result);
           }
         } else {
           alert("Database Error");

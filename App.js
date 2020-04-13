@@ -1,13 +1,17 @@
 import "react-native-gesture-handler";
 import React from "react";
-import store from "./REDUX/store";
 import { Provider } from "react-redux";
+import { NavigationContainer } from "@react-navigation/native";
+
+import store from "./REDUX/store";
 import HomePage from "./Components/HomePage";
 
-export default function App2() {
+export default function App() {
   return (
-    <Provider store={store}>
-      <HomePage />
-    </Provider>
+    <NavigationContainer>
+      <Provider store={store}>
+        <HomePage />
+      </Provider>
+    </NavigationContainer>
   );
 }

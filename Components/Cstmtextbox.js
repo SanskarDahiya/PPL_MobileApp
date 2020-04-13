@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TextInput } from "react-native";
 import styles from "../css/styles";
-const Cstmtextbox = props => {
+const Cstmtextbox = (props) => {
   //   console.log(props);
   return (
     <View style={styles.content}>
@@ -18,8 +18,9 @@ const Cstmtextbox = props => {
         maxLength={props.maxLength || 20}
         placeholder={props.placeholder || "Enter Data"}
         placeholderTextColor="#696969"
-        onChangeText={text => props.Updater(text)}
+        onChangeText={(text) => props.Updater(text)}
         secureTextEntry={props.isPassword || false}
+        defaultValue={props.value || ""}
       />
     </View>
   );

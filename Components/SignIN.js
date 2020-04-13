@@ -45,7 +45,9 @@ function SignIN(props) {
           else {
             if (res.data.result._id) {
               console.log("Sucessfull");
+              props.setZIndex(10);
               await addDataToStorage(JSON.stringify(res.data.result));
+              props.setZIndex(-1);
               props.getData(res.data.result);
             } else {
               alert("Please try after some time");

@@ -1,15 +1,15 @@
-export const ADDPOST = "ADDPOST";
-export const ADDALLPOST = "ADDALLPOST";
+export const SETPOST = "ADDPOST";
+export const UPDATEPOST = "UPDATEPOST";
 
-export const addShowPost = data => {
+export const setAllPost = (data) => {
   return {
-    type: ADDPOST,
-    data: data
+    type: SETPOST,
+    data: data,
   };
 };
-export const addAllPost = data => {
+export const updatePostAtIndex = (data) => {
   return {
-    type: ADDALLPOST,
-    data: data
+    type: UPDATEPOST,
+    data: data,
   };
 };

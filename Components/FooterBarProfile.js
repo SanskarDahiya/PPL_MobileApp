@@ -6,12 +6,12 @@ import { toogleTopPorton } from "../REDUX/actions/topPortionAction";
 
 const config = {
   velocityThreshold: 0.3,
-  directionalOffsetThreshold: 80
+  directionalOffsetThreshold: 80,
 };
 
-const FooterBarProfile = props => {
+const FooterBarProfile = (props) => {
   return (
-    <View style={styles.footer}>
+    <View style={[styles.footer]}>
       {/* <GestureRecognizer
         onSwipeUp={() => {
           console.log("Up");
@@ -25,7 +25,7 @@ const FooterBarProfile = props => {
         style={[styles.bottomBtn]}
         config={config}
       > */}
-      <TouchableWithoutFeedback
+      {/* <TouchableWithoutFeedback
         onPress={() => {
           props.toogleTopPorton(false);
           props.AnimateUploadBtn();
@@ -35,7 +35,7 @@ const FooterBarProfile = props => {
         <View style={[styles.bottomBtn, { width: "100%" }]}>
           <Text>UPLOAD</Text>
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback> */}
       {/* </GestureRecognizer>
 
       <GestureRecognizer
@@ -53,9 +53,9 @@ const FooterBarProfile = props => {
       > */}
       <TouchableWithoutFeedback
         onPress={() => {
-          props.toogleTopPorton(false);
+          // props.toogleTopPorton(false);
           props.AnimateFilterBtn();
-          props.AnimateUploadBtn(100);
+          // props.AnimateUploadBtn(100);
         }}
       >
         <View style={[styles.bottomBtn, { width: "100%" }]}>
@@ -68,18 +68,21 @@ const FooterBarProfile = props => {
 };
 
 export default connect(null, { toogleTopPorton })(FooterBarProfile);
+
+
 const styles = StyleSheet.create({
   bottomBtn: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1
+    borderWidth: 1,
   },
   footer: {
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-evenly",
     width: "100%",
-    position: "relative"
-  }
+    position: "relative",
+    backgroundColor: "white",
+  },
 });

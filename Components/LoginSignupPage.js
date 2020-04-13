@@ -1,37 +1,59 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import SignIn from "./SignIN";
 import Signup from "./Signup";
+import { connect } from "react-redux";
+import DelayingScreen from "./DelayingScreen";
 
-const LoginSignupPage = props => {
+const LoginSignupPage = (props) => {
   const [mainBtn, mainBtnUpdate] = useState(true);
   // useEffect(() => {
   //   console.log(mainBtn, "This is main Btn");
   // }, [mainBtn]);
-  const mainBtnUpdater = val => mainBtnUpdate(val);
+  const mainBtnUpdater = (val) => mainBtnUpdate(val);
   //   getDataFromStorage.then(res => console.log("This is get Data", res));
   return (
     <View style={styles.container}>
+      {props.zIndexVisibility != -1 && <DelayingScreen />}
       {/* Heading Container */}
       <View style={[styles.container, { justifyContent: "center" }]}>
-        <Text>This is React-Native Sample App</Text>
+        <Text>Welcome from PPL!</Text>
         {/* <Text> {id + "\n"}</Text> */}
       </View>
       <View style={styles.hrLine} />
-
       {/* Main Body Container */}
-      <View style={[styles.container, { flex: 5, justifyContent: "center" }]}>
-        {mainBtn ? (
-          <SignIn switchTab={mainBtnUpdater} getData={props.getData} />
-        ) : (
-          <Signup switchTab={mainBtnUpdater} />
-        )}
+
+      <View style={[styles.container, { flex: 8 }]}>
+        <ScrollView
+          contentContainerStyle={{
+            width: Dimensions.get("window").width,
+          }}
+        >
+          {mainBtn ? (
+            <SignIn
+              switchTab={mainBtnUpdater}
+              getData={props.route.params.getData}
+            />
+          ) : (
+            <Signup
+              switchTab={mainBtnUpdater}
+              getData={props.route.params.getData}
+            />
+          )}
+        </ScrollView>
       </View>
 
       {/* Bottom postion for login_signup switch */}
       <View style={[styles.hrLine, { width: "80%" }]} />
-      <View style={[styles.container, { flex: 1 }]}>
-        <TouchableWithoutFeedback onPress={() => mainBtnUpdater(!mainBtn)}>
+      <TouchableWithoutFeedback onPress={() => mainBtnUpdater(!mainBtn)}>
+        <View style={[styles.container, { flex: 1 }]}>
           <View>
             {mainBtn ? (
               <Text>
@@ -45,8 +67,8 @@ const LoginSignupPage = props => {
               </Text>
             )}
           </View>
-        </TouchableWithoutFeedback>
-      </View>
+        </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -57,14 +79,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%"
+    width: "100%",
   },
   hrLine: {
     borderColor: "orange",
     borderBottomWidth: 2,
     width: "95%",
-    height: 0
-  }
+    height: 0,
+  },
 });
 
-export default LoginSignupPage;
+export default connect((states) => {
+  return {
+    zIndexVisibility: states.zIndex.value,
+  };
+}, null)(LoginSignupPage);

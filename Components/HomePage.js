@@ -6,57 +6,65 @@ import { getDataFromStorage } from "../asyncStorage";
 import LoginSignupPage from "./LoginSignupPage";
 import Profile from "./Profile";
 import { connect } from "react-redux";
-import DelayingScreen from "./DelayingScreen";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
+import { createStackNavigator } from "@react-navigation/stack";
+const Stack = createStackNavigator();
 
 function HomePage(props) {
   const [StorageData, StorageDataUpdater] = useState(false);
   const getData = (data = false) => {
-    if (data) StorageDataUpdater(data === "Logout" ? false : data);
-    else
+    if (data) {
+      console.log("Setting data", data);
+      StorageDataUpdater(data === "logout" ? false : data);
+      props.setZIndex(-1);
+    } else
       getDataFromStorage()
-        .then(res => {
-          StorageDataUpdater(JSON.parse(res) || false);
+        .then((res) => {
+          let data = JSON.parse(res);
+          console.log("Data found in db", data);
+          StorageDataUpdater(data || false);
           props.setZIndex(-1);
         })
-        .catch(err => {
+        .catch((err) => {
+          console.log(err);
           props.setZIndex(-1);
         });
   };
   useEffect(() => {
     getData();
-    props.setZIndex(10);
+    // props.setZIndex(10);
   }, []);
+  //   <View style={styles.container}>
+  //   {props.zIndexVisibility != -1 && <DelayingScreen />}
+  // {StorageData ? (
+  //   // THis is Profile Page
+  //   <Profile data={StorageData} getData={getData} />
+  // ) : (
+  //   // Login Page
+  //   <LoginSignupPage getData={getData} />
+  // )}
+  // </View>
   return (
-    <View style={styles.container}>
-      {props.zIndexVisibility != -1 && <DelayingScreen />}
-
-      <Text
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          zIndex: 10,
-          borderBottomWidth: 5
-        }}
-      ></Text>
+    <Stack.Navigator>
       {StorageData ? (
         // THis is Profile Page
-        <Profile data={StorageData} getData={getData} />
+        <Stack.Screen
+          name="PPL"
+          component={Profile}
+          initialParams={{ data: StorageData, getData: getData }}
+        />
       ) : (
         // Login Page
-        <LoginSignupPage getData={getData} />
+        <Stack.Screen
+          name="PPL LOGIN/SIGNUP"
+          component={LoginSignupPage}
+          initialParams={{ getData: getData }}
+        />
       )}
-    </View>
+    </Stack.Navigator>
   );
 }
-export default HomePage = connect(
-  states => {
-    return {
-      zIndexVisibility: states.zIndex.value
-    };
-  },
-  { setZIndex }
-)(HomePage);
+export default connect(null, { setZIndex })(HomePage);
 
 const styles = StyleSheet.create({
   container: {
@@ -64,12 +72,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    width: "100%"
+    width: "100%",
   },
   hrLine: {
     borderColor: "orange",
     borderBottomWidth: 2,
     width: "95%",
-    height: 0
-  }
+    height: 0,
+  },
 });

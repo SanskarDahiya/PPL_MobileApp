@@ -1,16 +1,26 @@
-import { ADDPOST } from "../actions/mypostAction";
+import { SETPOST, UPDATEPOST } from "../actions/mypostAction";
 
 const initialState = {
-  data: []
+  data: [],
 };
 const post = (state = initialState, action) => {
   switch (action.type) {
-    case ADDPOST:
+    case SETPOST:
+      console.log("setting post", action.data.length);
+      return {
+        data: action.data,
+      };
+    case UPDATEPOST:
+      let newdata = state.data.map((val) => {
+        if (val._id === action.data._id) {
+          return action.data;
+        }
+        return val;
+      });
       return {
         ...state,
-        data: [...data, action.data]
+        data: newdata,
       };
-
     default:
       return state;
   }

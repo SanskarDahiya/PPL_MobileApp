@@ -7,7 +7,7 @@ const DelayingScreen = props => {
   const screenHeight = Math.round(Dimensions.get("window").height);
   const [rotate1] = useState(new Animated.Value(0));
   const [zIndex, zIndexUpdater] = useState(-1);
-  console.log(rotate1, "<><>", props);
+  // console.log(rotate1, "<><>", props);
 
   const AnimationCode = () => {
     if (props.zIndex == -1) {
