@@ -1,24 +1,28 @@
 import React, { useState, useEffect, useReducer } from "react";
 import { ScrollView, View, Text, Button, StyleSheet } from "react-native";
 import POSTWRAPPER from "./POSTWRAPPER";
-import { toogleTopPorton } from "../REDUX/actions/topPortionAction";
 import { connect } from "react-redux";
-import { getPosts } from "../AxiosCalls";
+import { filterData } from "../AxiosCalls";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { setAllPost } from "../REDUX/actions/mypostAction";
-import UploadPostTopPortion from "./ProfileUpload";
+import { PostFilterAction } from "../REDUX/actions/postFilterMenu";
 
 let isToTop = true,
   isToBottom = false;
 
 const MyAllPosts = (props) => {
   let scrollViewRef = false;
-
+  const [allPostFetched, allPostFetchedUpdater] = useState(false);
   useEffect(() => {
     try {
-      scrollViewRef.scrollTo({ x: 0, animated: true });
+      // scrollViewRef.scrollTo({ x: 0, animated: true });
     } catch (e) {}
   }, [props.getAllPosts]);
+
+  useEffect(() => {
+    scrollViewRef.scrollTo({ x: 0, animated: true });
+    allPostFetchedUpdater(false);
+  }, [props.postFilter]);
   useEffect(() => {
     const unsubscribe = props.route.params.listen("tabPress", (e) => {
       try {
@@ -28,6 +32,11 @@ const MyAllPosts = (props) => {
           scrollViewRef.scrollTo({ x: 0, animated: true });
 
           if (isToTop) {
+            props.setZIndex(10);
+            props.PostFilterAction({
+              filter: "createdDate",
+            });
+            props.setAllPost([]);
             RefreshNewPost();
           }
         }
@@ -36,15 +45,21 @@ const MyAllPosts = (props) => {
     return unsubscribe;
   }, [props.navigation]);
 
-  const getNewPosts = async (len = 0) => {
+  const getNewPosts = async (len) => {
     try {
       let {
         data: { result },
-      } = await getPosts(len);
+      } = await filterData({
+        ...props.postFilter,
+        offset: len || props?.getAllPosts?.length || 0,
+      });
       if (!result) {
         throw new Error("No Post Available");
       }
-      props.setAllPost([...result]);
+      if (result.length === 0) {
+        allPostFetchedUpdater(true);
+      }
+      props.setAllPost([...props.getAllPosts, ...result]);
       console.log("POST UPDATED", result.length);
       props.setZIndex(-1);
     } catch (err) {
@@ -54,7 +69,7 @@ const MyAllPosts = (props) => {
   };
 
   const RefreshNewPost = () => {
-    props.setZIndex(10);
+    console.log("getting refreshed");
     getNewPosts(0);
   };
 
@@ -76,6 +91,7 @@ const MyAllPosts = (props) => {
   return (
     <View>
       <ScrollView
+        key={1234}
         ref={(ref) => {
           if (!scrollViewRef) {
             scrollViewRef = ref;
@@ -96,6 +112,10 @@ const MyAllPosts = (props) => {
             //do something
             console.log("bottom");
             isToBottom = true;
+            if (!allPostFetched) {
+              console.log("fetching new post");
+              RefreshNewPost();
+            }
           }
         }}
       >
@@ -107,16 +127,30 @@ const MyAllPosts = (props) => {
             ToSinglePost={props.navigation.navigate}
           />
         ))}
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text>{!allPostFetched ? "Fetching More Post" : "No More Post"}</Text>
+        </View>
       </ScrollView>
     </View>
   );
 };
 
 export default connect(
-  ({ post: { data }, topPortion: { value: topVal } }) => {
-    return { topVal, getAllPosts: data };
+  (states) => {
+    const {
+      post: { data },
+      postFilter: { filter },
+    } = states;
+    return { getAllPosts: data, postFilter: filter };
   },
-  { toogleTopPorton, setZIndex, setAllPost }
+  { setZIndex, setAllPost, PostFilterAction }
 )(MyAllPosts);
 
 const AddCategoryTopPortion = (props) => {
@@ -127,7 +161,6 @@ const AddCategoryTopPortion = (props) => {
       <Button
         title="BACK"
         onPress={() => {
-          props.toogleTopPorton(false);
           props.AnimateUploadBtn();
         }}
       />

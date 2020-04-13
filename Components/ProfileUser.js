@@ -15,14 +15,14 @@ import { removeDataFromStorage } from "../asyncStorage";
 import DelayingScreen from "./DelayingScreen";
 const Mobilewidth = Dimensions.get("window").width;
 
-let scrollViewRef = false;
+let scrollViewRef_ = false;
 const ProfileUser = (props) => {
   useEffect(() => {
     try {
       const unsubscribe = props.route.params.addListenToTab("tabPress", (e) => {
         // e.preventDefault();
         console.log("ProfileBtn Clicked");
-        scrollViewRef.scrollTo({ x: 0, animated: true });
+        scrollViewRef_.scrollTo({ x: 0, animated: true });
       });
       return unsubscribe;
     } catch (e) {}
@@ -34,11 +34,11 @@ const ProfileUser = (props) => {
 
   return (
     <>
-      <DelayingScreen />
+      <DelayingScreen backgroundColor="white" />
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
         <ScrollView
           ref={(ref) => {
-            scrollViewRef = ref;
+            scrollViewRef_ = ref;
           }}
           style={{ width: "100%", borderWidth: 1, flex: 1 }}
         >

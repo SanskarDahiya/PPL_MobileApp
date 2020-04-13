@@ -13,6 +13,7 @@ import { like_comment } from "../AxiosCalls";
 import { getDataFromStorage } from "../asyncStorage";
 import { connect } from "react-redux";
 import { updatePostAtIndex } from "../REDUX/actions/mypostAction";
+import { NativeViewGestureHandler } from "react-native-gesture-handler";
 
 const USERIMAGE = require("../images/ppl/img_6.png");
 const bottomIcons = [
@@ -72,23 +73,25 @@ const POSTWRAPPER = (originalprops) => {
           } else {
             console.log("Comment Clicked");
             if (comment) {
-              console.log("Comment Data>> ", comment);
               let allComments = props.comments;
-              allComments.push({
+              allComments.data.push({
                 data: comment,
                 uploadedBy: {
                   _id: userdata._id,
                   username: userdata.data.username,
                 },
               });
+              allComments.length += 1;
 
               like_comment({
                 postid: props._id,
                 method: "comments",
-                data: [...allComments],
+                data: allComments,
               });
-              props.comments = [...allComments];
-              propsUpdater({ ...props, comments: [...allComments] });
+              // props.comments = [...allComments];
+              propsUpdater({ ...props, comments: allComments });
+              console.log("Comment Data>> ", comment);
+
             }
             // like_comment({
             //   method: "comment",
@@ -99,21 +102,27 @@ const POSTWRAPPER = (originalprops) => {
           }
           break;
         case 2:
-          let likes = new Set(props.likes);
+          let likesL = props.likes.length;
+          let likes = new Set(props.likes.data);
           if (likes.has(userdata._id)) {
             console.log("Unliked");
+            likesL -= 1;
             likes.delete(userdata._id);
           } else {
             console.log("Liked");
+            likesL += 1;
             likes.add(userdata._id);
           }
           like_comment({
             postid: props._id,
             method: "like",
-            data: [...likes],
+            data: { length: likesL, data: [...likes] },
           });
-          props.likes = [...likes];
-          propsUpdater({ ...props, likes: [...likes] });
+          // props.likes.data = [...likes];
+          propsUpdater({
+            ...props,
+            likes: { length: likesL, data: [...likes] },
+          });
           break;
         default:
           console.log("No Action for id", name);
@@ -225,9 +234,9 @@ const POSTWRAPPER = (originalprops) => {
           },
           {
             name:
-              props.likes && props.likes.length >= 10
-                ? props.likes.length + " Likes"
-                : (props.likes?.length || 0) + " Like",
+              props.likes && props.likes["length"] >= 10
+                ? props.likes["length"] + " Likes"
+                : (props.likes["length"] || 0) + " Like",
           },
         ].map((val, id) => (
           <TouchableWithoutFeedback
@@ -244,7 +253,7 @@ const POSTWRAPPER = (originalprops) => {
       {props.isSinglePost && (
         <CommentWrapper
           handelBottomButtons={handelBottomButtons}
-          comments={props.comments}
+          comments={props.comments.data}
         />
       )}
     </View>

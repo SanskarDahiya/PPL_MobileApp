@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import { connect } from "react-redux";
 import { setAllPost } from "../REDUX/actions/mypostAction";
-import { toogleTopPorton } from "../REDUX/actions/topPortionAction";
 import { filterData } from "../AxiosCalls";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
+import { PostFilterAction } from "../REDUX/actions/postFilterMenu";
 
 const BottomFiltersButtons = (props) => {
   const updatePost = (data) => {
@@ -24,6 +24,7 @@ const BottomFiltersButtons = (props) => {
         console.log(err, "error");
         props.setZIndex(-1);
       });
+    props.PostFilterAction(data);
   };
   return (
     <Animated.View
@@ -54,6 +55,7 @@ const BottomFiltersButtons = (props) => {
           console.log("This is btn2");
           updatePost({
             filter: "createdDate",
+            offset: 0,
             order: 1,
           });
         }}
@@ -64,7 +66,8 @@ const BottomFiltersButtons = (props) => {
         onPress={() => {
           console.log("This is btn3");
           updatePost({
-            filter: "likes",
+            filter: "likes.length",
+            offset: 0,
           });
         }}
       >
@@ -74,7 +77,8 @@ const BottomFiltersButtons = (props) => {
         onPress={() => {
           console.log("This is btn4");
           updatePost({
-            filter: "comments",
+            filter: "comments.length",
+            offset: 0,
           });
         }}
       >
@@ -84,12 +88,9 @@ const BottomFiltersButtons = (props) => {
   );
 };
 
-export default connect(
-  ({ topPortion: { value: topVal } }) => {
-    return { topVal };
-  },
-  { setAllPost, toogleTopPorton, setZIndex }
-)(BottomFiltersButtons);
+export default connect(null, { PostFilterAction, setAllPost, setZIndex })(
+  BottomFiltersButtons
+);
 
 const styles = StyleSheet.create({
   uploadFilterButtons: {

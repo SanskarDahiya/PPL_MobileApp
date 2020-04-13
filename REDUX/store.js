@@ -1,11 +1,11 @@
 import post from "./reducers/mypostReducer";
-import topPortion from "./reducers/topPortionReducer";
+import postFilter from "./reducers/PostFilterReducer";
 import zIndexFunction from "./reducers/zIndexReducer";
 import { combineReducers, createStore } from "redux";
 
 const reducers = combineReducers({
   post,
   zIndex: zIndexFunction,
-  topPortion
+  postFilter
 });
 export default createStore(reducers);

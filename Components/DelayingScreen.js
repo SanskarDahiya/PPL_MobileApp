@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Animated, View, Text, Dimensions, StyleSheet } from "react-native";
 import { connect } from "react-redux";
 var interval;
-const DelayingScreen = props => {
+const DelayingScreen = (props) => {
   const screenWidth = Math.round(Dimensions.get("window").width);
   const screenHeight = Math.round(Dimensions.get("window").height);
   const [rotate1] = useState(new Animated.Value(0));
@@ -16,13 +16,13 @@ const DelayingScreen = props => {
     console.log("TO 360");
     Animated.timing(rotate1, {
       toValue: 360,
-      duration: 1000
+      duration: 1000,
     }).start();
     setTimeout(() => {
       console.log("TO 0");
       Animated.timing(rotate1, {
         toValue: 0,
-        duration: 1000
+        duration: 1000,
       }).start();
     }, 2000);
   };
@@ -32,11 +32,13 @@ const DelayingScreen = props => {
       interval = setInterval(() => {
         AnimationCode();
       }, 4000);
+    } else {
+      window.clearInterval(interval);
     }
     return function cleanup() {
       window.clearInterval(interval);
     };
-  }, []);
+  }, [props.zIndex]);
 
   return (
     <View
@@ -48,12 +50,12 @@ const DelayingScreen = props => {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "grey",
+          backgroundColor: props.backgroundColor || "grey",
           width: screenWidth,
           height: screenHeight,
           zIndex: props.zIndex || -1,
-          opacity: 0.8
-        }
+          opacity: props.backgroundColor ? 1 : 0.8,
+        },
       ]}
     >
       <Animated.View
@@ -64,23 +66,23 @@ const DelayingScreen = props => {
               {
                 scaleX: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: [1, 1.2]
-                })
+                  outputRange: [1, 1.2],
+                }),
               },
               {
                 scaleY: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: [1, 1.2]
-                })
+                  outputRange: [1, 1.2],
+                }),
               },
               {
                 rotate: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: ["0deg", "360deg"]
-                })
-              }
-            ]
-          }
+                  outputRange: ["0deg", "360deg"],
+                }),
+              },
+            ],
+          },
         ]}
       ></Animated.View>
       <Animated.View
@@ -93,23 +95,23 @@ const DelayingScreen = props => {
               {
                 scaleX: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: [1.5, 1]
-                })
+                  outputRange: [1.5, 1],
+                }),
               },
               {
                 scaleY: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: [1.5, 1]
-                })
+                  outputRange: [1.5, 1],
+                }),
               },
               {
                 rotate: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: ["225deg", "45deg"]
-                })
-              }
-            ]
-          }
+                  outputRange: ["225deg", "45deg"],
+                }),
+              },
+            ],
+          },
         ]}
       ></Animated.View>
       <Text style={{ color: "white" }}>LOADING</Text>
@@ -123,9 +125,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     height: 100,
     width: 100,
-    borderColor: "orange"
-  }
+    borderColor: "orange",
+  },
 });
-export default connect(states => {
+export default connect((states) => {
   return { zIndex: states.zIndex.value };
 }, null)(DelayingScreen);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -9,7 +9,6 @@ import {
 import { connect } from "react-redux";
 import FooterBarProfile from "./FooterBarProfile";
 import MyAllPosts from "./MyAllPosts";
-import { toogleTopPorton } from "../REDUX/actions/topPortionAction";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import BottomFiltersButtons from "./BottomFiltersButtons";
 import DelayingScreen from "./DelayingScreen";
@@ -64,7 +63,7 @@ const ProfileHomePage = (props) => {
 
 export default connect(
   (state) => {
-    return { zIndexVisibility: state.zIndex.value, AllPosts: state.post.data };
+    return { zIndexVisibility: state.zIndex.value };
   },
   { setZIndex }
 )(ProfileHomePage);
@@ -172,17 +171,11 @@ const MainBodyContent_ = (props) => {
           },
         ]}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            props.toogleTopPorton("post");
-            // console.log("This is upload btn", props.topVal);
-          }}
-        >
+        <TouchableWithoutFeedback onPress={() => {}}>
           <Text style={[styles.navtext]}>Upload Post</Text>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => {
-            props.toogleTopPorton("category");
             // console.log("This is Add Category btn");
           }}
         >
@@ -199,9 +192,4 @@ const MainBodyContent_ = (props) => {
   );
 };
 
-const MainBodyContent = connect(
-  ({ topPortion: { value: topVal } }) => {
-    return { topVal };
-  },
-  { toogleTopPorton }
-)(MainBodyContent_);
+const MainBodyContent = connect(null, null)(MainBodyContent_);

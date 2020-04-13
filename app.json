@@ -2,16 +2,16 @@
     "expo": {
         "name": "PPL",
         "icon": "./assets/icon.png",
-        "version": "1.0.0",
-        "slug": "reactNative_1",
+        "version": "1.0.1",
+        "slug": "PPL_MobileApp",
         "sdkVersion": "36.0.0",
-        "ios": {
-            "bundleIdentifier": "com.sanskardahiya.ppl",
-            "buildNumber": "1.0.0"
-        },
         "android": {
             "package": "sanskardahiya.ppl",
             "versionCode": 1
+        },
+        "ios": {
+            "bundleIdentifier": "sanskardahiya.ppl",
+            "buildNumber": "1.0.1"
         }
     }
 }

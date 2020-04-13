@@ -192,9 +192,8 @@ const UploadPostTopPortion = (props) => {
             alignItems: "center",
           }}
         >
-          <TouchableWithoutFeedback
+          {/* <TouchableWithoutFeedback
             onPress={() => {
-              props.toogleTopPorton(false);
               props.AnimateUploadBtn();
               // console.log(props);
             }}
@@ -202,7 +201,7 @@ const UploadPostTopPortion = (props) => {
             <View style={[styles.topPortionBtn]}>
               <Text style={{ fontSize: 14, color: "white" }}>BACK</Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableWithoutFeedback> */}
           <TouchableWithoutFeedback onPress={handleUploadButton}>
             <View style={[styles.topPortionBtn]}>
               <Text style={{ fontSize: 14, color: "white" }}>UPLOAD</Text>

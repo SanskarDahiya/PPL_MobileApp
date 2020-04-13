@@ -2,7 +2,6 @@ import React from "react";
 import GestureRecognizer from "react-native-swipe-gestures";
 import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
 import { connect } from "react-redux";
-import { toogleTopPorton } from "../REDUX/actions/topPortionAction";
 
 const config = {
   velocityThreshold: 0.3,
@@ -27,7 +26,6 @@ const FooterBarProfile = (props) => {
       > */}
       {/* <TouchableWithoutFeedback
         onPress={() => {
-          props.toogleTopPorton(false);
           props.AnimateUploadBtn();
           props.AnimateFilterBtn(100);
         }}
@@ -53,7 +51,6 @@ const FooterBarProfile = (props) => {
       > */}
       <TouchableWithoutFeedback
         onPress={() => {
-          // props.toogleTopPorton(false);
           props.AnimateFilterBtn();
           // props.AnimateUploadBtn(100);
         }}
@@ -67,8 +64,7 @@ const FooterBarProfile = (props) => {
   );
 };
 
-export default connect(null, { toogleTopPorton })(FooterBarProfile);
-
+export default connect(null, null)(FooterBarProfile);
 
 const styles = StyleSheet.create({
   bottomBtn: {

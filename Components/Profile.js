@@ -23,7 +23,7 @@ const ProfileHomeDivider = (props) => {
   };
 
   return (
-    <profileStack.Navigator initialRouteName="allpost">
+    <profileStack.Navigator initialRouteName="allpost" headerMode="none">
       <profileStack.Screen
         name="allpost"
         component={ProfileHomePage}
@@ -61,7 +61,7 @@ const ProfileUserDivider = (props) => {
   };
 
   return (
-    <profileStack.Navigator initialRouteName="userprofile">
+    <profileStack.Navigator initialRouteName="userprofile" headerMode="none">
       <profileStack.Screen
         name="userprofile"
         component={ProfileUser}
@@ -83,6 +83,7 @@ const ProfileUserDivider = (props) => {
           title: "",
           headerStyle: {
             height: 0,
+            
           },
         }}
       />
