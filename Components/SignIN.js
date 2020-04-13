@@ -56,7 +56,10 @@ function SignIN(props) {
         }
       }
     } catch (err) {
-      console.log(err, "Error");
+      console.log(err, "Error,<<");
+      if (err.toString().search("503") >= 0) {
+        alert("Database Not Connected");
+      }
     }
     isUserRegistering = false;
     props.setZIndex(-1);

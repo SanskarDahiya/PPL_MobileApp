@@ -107,6 +107,9 @@ function Login(props) {
       }
     } catch (err) {
       console.log(err, "Error");
+      if (err.toString().search("503") >= 0) {
+        alert("Database Not Connected");
+      }
     }
     isUserLogging = false;
     props.setZIndex(-1);
