@@ -6,6 +6,7 @@ import { SignupCall } from "../AxiosCalls";
 import { connect } from "react-redux";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { addDataToStorage } from "../asyncStorage";
+import { userLoggedInAction } from "../REDUX/actions/loginSingupAction";
 
 function Login(props) {
   let isUserLogging = false;
@@ -99,7 +100,7 @@ function Login(props) {
             console.log("Register Sucessfull", result);
             props.setZIndex(-1);
             await addDataToStorage(JSON.stringify(result));
-            props.getData(result);
+            props.userLoggedInAction(result);
           }
         } else {
           alert("Database Error");
@@ -172,4 +173,4 @@ function Login(props) {
   );
 }
 
-export default connect(null, { setZIndex })(Login);
+export default connect(null, { setZIndex, userLoggedInAction })(Login);

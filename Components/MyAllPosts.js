@@ -8,8 +8,9 @@ import { setAllPost } from "../REDUX/actions/mypostAction";
 import { PostFilterAction } from "../REDUX/actions/postFilterMenu";
 
 let isToTop = true,
-  isToBottom = false;
-
+  isToBottom = false,
+  ifNewPostIsFetched = false,
+  ifHomeButtonIsPressedOnTopForNewPost = false;
 const MyAllPosts = (props) => {
   let scrollViewRef = false;
   const [allPostFetched, allPostFetchedUpdater] = useState(false);
@@ -31,13 +32,14 @@ const MyAllPosts = (props) => {
           console.log("Homebtn Clicked", isToTop);
           scrollViewRef.scrollTo({ x: 0, animated: true });
 
-          if (isToTop) {
+          if (isToTop && !ifHomeButtonIsPressedOnTopForNewPost) {
+            ifHomeButtonIsPressedOnTopForNewPost = true;
             props.setZIndex(10);
             props.PostFilterAction({
               filter: "createdDate",
             });
+            RefreshNewPost(0);
             props.setAllPost([]);
-            RefreshNewPost();
           }
         }
       } catch (e) {}
@@ -47,11 +49,16 @@ const MyAllPosts = (props) => {
 
   const getNewPosts = async (len) => {
     try {
+      let offset = 0;
+      if (len != 0 && props?.getAllPosts?.length > 0) {
+        offset = props.getAllPosts.length;
+      }
+      console.log("OFFSET is set to>> ", offset);
       let {
         data: { result },
       } = await filterData({
         ...props.postFilter,
-        offset: len || props?.getAllPosts?.length || 0,
+        offset,
       });
       if (!result) {
         throw new Error("No Post Available");
@@ -60,17 +67,19 @@ const MyAllPosts = (props) => {
         allPostFetchedUpdater(true);
       }
       props.setAllPost([...props.getAllPosts, ...result]);
-      console.log("POST UPDATED", result.length);
+      console.log("POST UPDATED IN REDUX ");
       props.setZIndex(-1);
     } catch (err) {
       console.log(err, "error in getting post");
       alert("Unable to Fetch Post");
     }
+    ifNewPostIsFetched = false;
+    ifHomeButtonIsPressedOnTopForNewPost = false;
   };
 
-  const RefreshNewPost = () => {
-    console.log("getting refreshed");
-    getNewPosts(0);
+  const RefreshNewPost = (len) => {
+    console.log("Refreshing post");
+    getNewPosts(len);
   };
 
   function isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
@@ -85,7 +94,7 @@ const MyAllPosts = (props) => {
 
   useEffect(() => {
     props.setZIndex(10);
-    getNewPosts();
+    getNewPosts(0);
   }, []);
 
   return (
@@ -112,9 +121,16 @@ const MyAllPosts = (props) => {
             //do something
             console.log("bottom");
             isToBottom = true;
-            if (!allPostFetched) {
+            if (
+              !allPostFetched &&
+              !ifNewPostIsFetched &&
+              props.getAllPosts.length > 0
+            ) {
+              ifNewPostIsFetched = true;
               console.log("fetching new post");
-              RefreshNewPost();
+              setTimeout(() => {
+                RefreshNewPost();
+              }, 1500);
             }
           }
         }}

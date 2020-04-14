@@ -14,11 +14,8 @@ import DelayingScreen from "./DelayingScreen";
 
 const LoginSignupPage = (props) => {
   const [mainBtn, mainBtnUpdate] = useState(true);
-  // useEffect(() => {
-  //   console.log(mainBtn, "This is main Btn");
-  // }, [mainBtn]);
   const mainBtnUpdater = (val) => mainBtnUpdate(val);
-  //   getDataFromStorage.then(res => console.log("This is get Data", res));
+
   return (
     <View style={styles.container}>
       {props.zIndexVisibility != -1 && <DelayingScreen />}
@@ -37,15 +34,9 @@ const LoginSignupPage = (props) => {
           }}
         >
           {mainBtn ? (
-            <SignIn
-              switchTab={mainBtnUpdater}
-              getData={props.route.params.getData}
-            />
+            <SignIn switchTab={mainBtnUpdater} />
           ) : (
-            <Signup
-              switchTab={mainBtnUpdater}
-              getData={props.route.params.getData}
-            />
+            <Signup switchTab={mainBtnUpdater} />
           )}
         </ScrollView>
       </View>

@@ -6,6 +6,8 @@ const initialState = {
 };
 const postFilter = (state = initialState, action) => {
   switch (action.type) {
+    case "RESET":
+      return initialState;
     case "postfilter":
       return { ...state, filter: action.data };
     default:

@@ -1,70 +1,90 @@
 import "react-native-gesture-handler";
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
-
+import { StyleSheet, View, Text } from "react-native";
 import { getDataFromStorage } from "../asyncStorage";
 import LoginSignupPage from "./LoginSignupPage";
 import Profile from "./Profile";
 import { connect } from "react-redux";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { createStackNavigator } from "@react-navigation/stack";
+import DelayingScreen from "./DelayingScreen";
+import {
+  userLoggedOutAction,
+  userLoggedInAction,
+} from "../REDUX/actions/loginSingupAction";
+
 const Stack = createStackNavigator();
+const RESET_REDUX_DATA = () => {
+  return {
+    type: "RESET",
+  };
+};
 
 function HomePage(props) {
-  const [StorageData, StorageDataUpdater] = useState(false);
-  const getData = (data = false) => {
+  const getData = async (data = false) => {
     if (data) {
-      console.log("Setting data", data);
-      StorageDataUpdater(data === "logout" ? false : data);
       props.setZIndex(-1);
-    } else
-      getDataFromStorage()
-        .then((res) => {
-          let data = JSON.parse(res);
+      console.log("Setting data", data);
+      props.userLoggedOutAction();
+    } else {
+      try {
+        let res = await getDataFromStorage();
+        props.setZIndex(-1);
+        let data = JSON.parse(res);
+        if (data) {
           console.log("Data found in db", data);
-          StorageDataUpdater(data || false);
-          props.setZIndex(-1);
-        })
-        .catch((err) => {
-          console.log(err);
-          props.setZIndex(-1);
-        });
+          props.userLoggedInAction(data);
+        } else {
+          props.userLoggedOutAction();
+        }
+      } catch (err) {
+        props.userLoggedOutAction();
+        console.log(err);
+      }
+    }
   };
+
   useEffect(() => {
-    getData();
+    setTimeout(() => {
+      getData();
+    }, 1500);
+    props.RESET_REDUX_DATA();
+    console.log("REDUX DATA RESET");
     // props.setZIndex(10);
   }, []);
-  //   <View style={styles.container}>
-  //   {props.zIndexVisibility != -1 && <DelayingScreen />}
-  // {StorageData ? (
-  //   // THis is Profile Page
-  //   <Profile data={StorageData} getData={getData} />
-  // ) : (
-  //   // Login Page
-  //   <LoginSignupPage getData={getData} />
-  // )}
-  // </View>
+
+  if (props.loginAuthReducer.isSearching) {
+    props.setZIndex(10);
+  }
   return (
     <Stack.Navigator>
-      {StorageData ? (
-        // THis is Profile Page
+      {props.loginAuthReducer.isSearching ? (
         <Stack.Screen
-          name="PPL"
-          component={Profile}
-          initialParams={{ data: StorageData, getData: getData }}
+          name="searching"
+          component={DelayingScreen}
+          options={{
+            title: "",
+            headerStyle: {
+              height: 0,
+            },
+          }}
         />
+      ) : props.loginAuthReducer.isAllowed ? (
+        // THis is Profile Page
+        <Stack.Screen name="PPL" component={Profile} />
       ) : (
         // Login Page
-        <Stack.Screen
-          name="PPL LOGIN/SIGNUP"
-          component={LoginSignupPage}
-          initialParams={{ getData: getData }}
-        />
+        <Stack.Screen name="PPL LOGIN/SIGNUP" component={LoginSignupPage} />
       )}
     </Stack.Navigator>
   );
 }
-export default connect(null, { setZIndex })(HomePage);
+export default connect(
+  ({ loginAuthReducer }) => {
+    return { loginAuthReducer };
+  },
+  { setZIndex, RESET_REDUX_DATA, userLoggedInAction, userLoggedOutAction }
+)(HomePage);
 
 const styles = StyleSheet.create({
   container: {

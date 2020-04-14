@@ -2,7 +2,7 @@
     "expo": {
         "name": "PPL",
         "icon": "./assets/icon.png",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "slug": "PPL_MobileApp",
         "sdkVersion": "36.0.0",
         "android": {
@@ -11,7 +11,7 @@
         },
         "ios": {
             "bundleIdentifier": "sanskardahiya.ppl",
-            "buildNumber": "1.0.1"
+            "buildNumber": "1.0.2"
         }
     }
 }

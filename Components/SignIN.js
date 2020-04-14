@@ -6,6 +6,7 @@ import { addDataToStorage } from "../asyncStorage";
 import { LoginCall } from "../AxiosCalls";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { connect } from "react-redux";
+import { userLoggedInAction } from "../REDUX/actions/loginSingupAction";
 
 function SignIN(props) {
   let isUserRegistering = false;
@@ -48,7 +49,7 @@ function SignIN(props) {
               props.setZIndex(10);
               await addDataToStorage(JSON.stringify(res.data.result));
               props.setZIndex(-1);
-              props.getData(res.data.result);
+              props.userLoggedInAction(res.data.result);
             } else {
               alert("Please try after some time");
             }
@@ -100,4 +101,4 @@ function SignIN(props) {
   );
 }
 
-export default connect(null, { setZIndex })(SignIN);
+export default connect(null, { setZIndex, userLoggedInAction })(SignIN);

@@ -83,7 +83,6 @@ const ProfileUserDivider = (props) => {
           title: "",
           headerStyle: {
             height: 0,
-            
           },
         }}
       />
@@ -92,6 +91,7 @@ const ProfileUserDivider = (props) => {
 };
 
 const Profile = (props) => {
+  console.log("this is profile data", props,"<><><><> <><><><> <><><><<> <<><><><");
   return (
     <Tab.Navigator
       initialRouteName="home"

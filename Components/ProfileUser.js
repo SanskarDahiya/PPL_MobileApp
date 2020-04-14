@@ -13,10 +13,17 @@ import POSTWRAPPER from "./POSTWRAPPER";
 import { connect } from "react-redux";
 import { removeDataFromStorage } from "../asyncStorage";
 import DelayingScreen from "./DelayingScreen";
+import { userLoggedOutAction } from "../REDUX/actions/loginSingupAction";
 const Mobilewidth = Dimensions.get("window").width;
-
+const RESET_REDUX_DATA = () => {
+  return {
+    type: "RESET",
+  };
+};
 let scrollViewRef_ = false;
 const ProfileUser = (props) => {
+  console.log(props.loginAuthReducer, "USERMENU DETILS <,<<><><>>");
+
   useEffect(() => {
     try {
       const unsubscribe = props.route.params.addListenToTab("tabPress", (e) => {
@@ -31,6 +38,11 @@ const ProfileUser = (props) => {
   const addSinglePostOnClick = (data) => {
     props.navigation.navigate("tosinglepost", { ...data });
   };
+  const LOGOUT = () => {
+    removeDataFromStorage();
+    props.userLoggedOutAction();
+    props.RESET_REDUX_DATA();
+  };
 
   return (
     <>
@@ -42,14 +54,11 @@ const ProfileUser = (props) => {
           }}
           style={{ width: "100%", borderWidth: 1, flex: 1 }}
         >
-          <UserMenu
-            {...props.route.params.data}
-            getData={props.route.params.getData}
-          />
+          <UserMenu {...props.loginAuthReducer.userData} LOGOUT={LOGOUT} />
           <Text style={{ borderBottomWidth: 1, width: "100%" }} />
           <UserPost
             posts={props.getAllPosts}
-            userData={props.route.params.data}
+            userData={props.loginAuthReducer.userData}
             addSinglePostOnClick={addSinglePostOnClick}
           />
         </ScrollView>
@@ -60,9 +69,12 @@ const ProfileUser = (props) => {
 
 // export default ProfileUser;
 
-export default connect(({ post: { data } }) => {
-  return { getAllPosts: data };
-}, null)(ProfileUser);
+export default connect(
+  ({ post: { data }, loginAuthReducer }) => {
+    return { getAllPosts: data, loginAuthReducer };
+  },
+  { userLoggedOutAction, RESET_REDUX_DATA }
+)(ProfileUser);
 
 const UserMenu = (props) => {
   let selfData = props.data || {};
@@ -80,30 +92,33 @@ const UserMenu = (props) => {
         Hello {selfData.firstname + " " + selfData.lastname}
       </Text>
       <View>
-        {["username", "email"].map((val, id) => (
-          <View
-            key={id + "UserDetails"}
-            style={[
-              {
-                flexDirection: "row",
-                width: "100%",
-                borderWidth: 1,
-                padding: 10,
-              },
-            ]}
-          >
-            <Text style={{ width: "25%" }}>{val}</Text>
-            <Text>:</Text>
-            <Text style={{ fontWeight: "bold" }}>{props.data[val]}</Text>
-          </View>
-        ))}
+        {["username", "email"].map((val, id) => {
+          let returning_data = <></>;
+          try {
+            returning_data = (
+              <View
+                key={id + "UserDetails"}
+                style={[
+                  {
+                    flexDirection: "row",
+                    width: "100%",
+                    borderWidth: 1,
+                    padding: 10,
+                  },
+                ]}
+              >
+                <Text style={{ width: "25%" }}>{val}</Text>
+                <Text>:</Text>
+                <Text style={{ fontWeight: "bold" }}>{props.data[val]}</Text>
+              </View>
+            );
+          } catch (e) {
+            returning_data = <View key={id + "UserDetails"} />;
+          }
+          return returning_data;
+        })}
       </View>
-      <TouchableOpacity
-        onPress={() => {
-          props.getData("logout");
-          removeDataFromStorage();
-        }}
-      >
+      <TouchableOpacity onPress={props.LOGOUT}>
         <View
           style={{
             width: "100%",

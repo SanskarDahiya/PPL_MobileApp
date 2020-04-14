@@ -5,6 +5,8 @@ const initialState = {
 };
 const post = (state = initialState, action) => {
   switch (action.type) {
+    case "RESET":
+      return initialState;
     case SETPOST:
       console.log("setting post", action.data.length);
       return {
