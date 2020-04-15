@@ -7,6 +7,7 @@ import { LoginCall } from "../AxiosCalls";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { connect } from "react-redux";
 import { userLoggedInAction } from "../REDUX/actions/loginSingupAction";
+import { encryptPassword } from "../Encryption";
 
 function SignIN(props) {
   let isUserRegistering = false;
@@ -37,7 +38,12 @@ function SignIN(props) {
         passwordAlertUpdater("");
         usernameAlertUpdater("");
         props.setZIndex(10);
-        let res = await LoginCall({ username, password });
+        let dataToBeSend = {
+          username: username.toLowerCase(),
+          password: encryptPassword(password),
+        };
+        console.log(dataToBeSend, "<<signin data");
+        let res = await LoginCall(dataToBeSend);
         if (res.data.result) {
           if (res.data.result === "Invalid Password")
             passwordAlertUpdater("Incorrect Password");

@@ -1,6 +1,6 @@
 import Axios from "axios";
-// const urlPrefix = "http://192.168.43.116:8081/";
-const urlPrefix = "https://pplbackend.herokuapp.com/";
+const urlPrefix = "http://192.168.43.116:8081/";
+// const urlPrefix = "https://pplbackend.herokuapp.com/";
 export const LoginCall = (data) => Axios.post(urlPrefix + "user/login", data);
 export const SignupCall = (data) =>
   Axios.post(urlPrefix + "user/registration", data);
@@ -37,3 +37,6 @@ export const like_comment = (data) =>
 
 export const filterData = (data) =>
   Axios.post(urlPrefix + "post/filter", { ...data });
+
+export const getUserPosts = (_id, offset) =>
+  Axios.post(urlPrefix + "post/getPostById", { _id, offset });

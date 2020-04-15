@@ -4,17 +4,18 @@ import {
   View,
   Image,
   Text,
-  Button,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
 } from "react-native";
-import POSTWRAPPER from "./POSTWRAPPER";
 import { connect } from "react-redux";
 import { removeDataFromStorage } from "../asyncStorage";
 import DelayingScreen from "./DelayingScreen";
 import { userLoggedOutAction } from "../REDUX/actions/loginSingupAction";
+import { getUserPosts } from "../AxiosCalls";
+
 const Mobilewidth = Dimensions.get("window").width;
+const MobileHeight = Dimensions.get("window").height;
 const RESET_REDUX_DATA = () => {
   return {
     type: "RESET",
@@ -22,7 +23,9 @@ const RESET_REDUX_DATA = () => {
 };
 let scrollViewRef_ = false;
 const ProfileUser = (props) => {
-  console.log(props.loginAuthReducer, "USERMENU DETILS <,<<><><>>");
+  let isPostFetchingFromDb = false;
+  const [isMorePostAvailable, isMorePostAvailableU] = useState(true);
+  const [thisUserPost, thisUserPostUpdater] = useState([]);
 
   useEffect(() => {
     try {
@@ -38,10 +41,48 @@ const ProfileUser = (props) => {
   const addSinglePostOnClick = (data) => {
     props.navigation.navigate("tosinglepost", { ...data });
   };
+
   const LOGOUT = () => {
     removeDataFromStorage();
     props.userLoggedOutAction();
     props.RESET_REDUX_DATA();
+  };
+  const getPostFromDb = async () => {
+    try {
+      let _id = props.loginAuthReducer?.userData?._id || "",
+        offset = thisUserPost.length || 0;
+      let {
+        data: { result },
+      } = await getUserPosts(_id, offset);
+      if (result) {
+        if (result.length == 0) {
+          isMorePostAvailableU(false);
+        } else {
+          thisUserPostUpdater([...thisUserPost, ...result])
+
+          console.log(result.length, "data recived", isMorePostAvailable);
+        }
+      }
+    } catch (err) {
+      console.log(err, "err aios call db");
+    }
+    isPostFetchingFromDb = false;
+  };
+
+  useEffect(() => {
+    console.log("updating new post", thisUserPost.length, isMorePostAvailable);
+    getPostFromDb();
+  }, []);
+
+  const isNearToBottom = ({
+    layoutMeasurement,
+    contentOffset,
+    contentSize,
+  }) => {
+    return (
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - MobileHeight / 2
+    );
   };
 
   return (
@@ -52,13 +93,21 @@ const ProfileUser = (props) => {
           ref={(ref) => {
             scrollViewRef_ = ref;
           }}
+          onScroll={({ nativeEvent }) => {
+            if (isNearToBottom(nativeEvent)) {
+              // console.log("bottom,userproifle");
+              if (!isPostFetchingFromDb && isMorePostAvailable) {
+                isPostFetchingFromDb = true;
+                getPostFromDb();
+              }
+            }
+          }}
           style={{ width: "100%", borderWidth: 1, flex: 1 }}
         >
           <UserMenu {...props.loginAuthReducer.userData} LOGOUT={LOGOUT} />
           <Text style={{ borderBottomWidth: 1, width: "100%" }} />
           <UserPost
-            posts={props.getAllPosts}
-            userData={props.loginAuthReducer.userData}
+            posts={thisUserPost}
             addSinglePostOnClick={addSinglePostOnClick}
           />
         </ScrollView>
@@ -137,20 +186,9 @@ const UserMenu = (props) => {
 };
 
 const UserPost = (props) => {
-  const [userPost, userPostUpdater] = useState([]);
-  useEffect(() => {
-    let Data = props.posts.filter((file) => {
-      return file.uploadedBy._id === props.userData._id;
-    });
-    if (userPost.length !== Data.length) {
-      userPostUpdater(Data);
-    }
-    // console.log("Here All Post is retrived", Data.length);
-  }, [props.posts]);
-
   return (
     <View style={[styles.parentWrap]}>
-      {userPost.map((value, _id) => (
+      {props.posts.map((value, _id) => (
         <TouchableOpacity
           style={[styles.smallPostCover]}
           key={value._id + "UP" || _id + "UP"}

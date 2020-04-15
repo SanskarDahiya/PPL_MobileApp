@@ -18,7 +18,7 @@ const LoginSignupPage = (props) => {
 
   return (
     <View style={styles.container}>
-      {props.zIndexVisibility != -1 && <DelayingScreen />}
+      <DelayingScreen />
       {/* Heading Container */}
       <View style={[styles.container, { justifyContent: "center" }]}>
         <Text>Welcome from PPL!</Text>

@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useReducer } from "react";
-import { ScrollView, View, Text, Button, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { ScrollView, View, Text, Button, Dimensions } from "react-native";
 import POSTWRAPPER from "./POSTWRAPPER";
 import { connect } from "react-redux";
 import { filterData } from "../AxiosCalls";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { setAllPost } from "../REDUX/actions/mypostAction";
 import { PostFilterAction } from "../REDUX/actions/postFilterMenu";
+const MobileHeight = Dimensions.get("window").height;
 
 let isToTop = true,
   isToBottom = false,
   ifNewPostIsFetched = false,
   ifHomeButtonIsPressedOnTopForNewPost = false;
+
 const MyAllPosts = (props) => {
   let scrollViewRef = false;
   const [allPostFetched, allPostFetchedUpdater] = useState(false);
@@ -84,7 +86,8 @@ const MyAllPosts = (props) => {
 
   function isCloseToBottom({ layoutMeasurement, contentOffset, contentSize }) {
     return (
-      layoutMeasurement.height + contentOffset.y >= contentSize.height - 50
+      layoutMeasurement.height + contentOffset.y >=
+      contentSize.height - MobileHeight / 2
     );
   }
 
@@ -128,9 +131,7 @@ const MyAllPosts = (props) => {
             ) {
               ifNewPostIsFetched = true;
               console.log("fetching new post");
-              setTimeout(() => {
-                RefreshNewPost();
-              }, 1500);
+              RefreshNewPost();
             }
           }
         }}

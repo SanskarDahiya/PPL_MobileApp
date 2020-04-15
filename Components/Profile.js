@@ -91,7 +91,6 @@ const ProfileUserDivider = (props) => {
 };
 
 const Profile = (props) => {
-  console.log("this is profile data", props,"<><><><> <><><><> <><><><<> <<><><><");
   return (
     <Tab.Navigator
       initialRouteName="home"

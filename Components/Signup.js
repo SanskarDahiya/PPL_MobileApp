@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { setZIndex } from "../REDUX/actions/zIndexAction";
 import { addDataToStorage } from "../asyncStorage";
 import { userLoggedInAction } from "../REDUX/actions/loginSingupAction";
+import { encryptPassword } from "../Encryption";
 
 function Login(props) {
   let isUserLogging = false;
@@ -82,15 +83,16 @@ function Login(props) {
       if (checkDetails()) {
         passwordAlertUpdater("");
         usernameAlertUpdater("");
-        let {
-          data: { result = false },
-        } = await SignupCall({
-          username,
-          password,
+        let dataToBeSend = {
+          username: username.toLowerCase(),
+          password: await encryptPassword(password),
           firstname: fName,
           lastname: lName,
           email,
-        });
+        };
+        let {
+          data: { result = false },
+        } = await SignupCall(dataToBeSend);
         console.log(result, "<<<");
         if (result) {
           if (result === "User Already Registered") {

@@ -84,14 +84,12 @@ const POSTWRAPPER = (originalprops) => {
               allComments.length += 1;
 
               like_comment({
-                postid: props._id,
                 method: "comments",
-                data: allComments,
+                ...allComments,
               });
               // props.comments = [...allComments];
               propsUpdater({ ...props, comments: allComments });
               console.log("Comment Data>> ", comment);
-
             }
             // like_comment({
             //   method: "comment",
@@ -114,14 +112,15 @@ const POSTWRAPPER = (originalprops) => {
             likes.add(userdata._id);
           }
           like_comment({
-            postid: props._id,
             method: "like",
-            data: { length: likesL, data: [...likes] },
+            ...props.likes,
+            length: likesL,
+            data: [...likes],
           });
           // props.likes.data = [...likes];
           propsUpdater({
             ...props,
-            likes: { length: likesL, data: [...likes] },
+            likes: { ...props.likes, length: likesL, data: [...likes] },
           });
           break;
         default:
@@ -319,7 +318,14 @@ const styles = StyleSheet.create({
   },
 });
 
+const commentExit = () => {
+  console.log("OUT from comment");
+};
 const CommentWrapper = (props) => {
+  useEffect(() => {
+    console.log("Subscribe to Comment of id");
+    return commentExit;
+  }, []);
   const [comment, commentUpdater] = useState("");
   const [alert, alertUpdater] = useState({});
   return (
