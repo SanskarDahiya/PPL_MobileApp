@@ -1,22 +1,22 @@
-import "react-native-gesture-handler";
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { getDataFromStorage } from "../asyncStorage";
-import LoginSignupPage from "./LoginSignupPage";
-import Profile from "./Profile";
-import { connect } from "react-redux";
-import { setZIndex } from "../REDUX/actions/zIndexAction";
-import { createStackNavigator } from "@react-navigation/stack";
-import DelayingScreen from "./DelayingScreen";
+import 'react-native-gesture-handler';
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, View, Text} from 'react-native';
+import {getDataFromStorage} from '../asyncStorage';
+import LoginSignupPage from './LoginSignupPage';
+import Profile from './Profile';
+import {connect} from 'react-redux';
+import {setZIndex} from '../REDUX/actions/zIndexAction';
+import {createStackNavigator} from '@react-navigation/stack';
+import DelayingScreen from './DelayingScreen';
 import {
   userLoggedOutAction,
   userLoggedInAction,
-} from "../REDUX/actions/loginSingupAction";
+} from '../REDUX/actions/loginSingupAction';
 
 const Stack = createStackNavigator();
 const RESET_REDUX_DATA = () => {
   return {
-    type: "RESET",
+    type: 'RESET',
   };
 };
 
@@ -24,7 +24,7 @@ function HomePage(props) {
   const getData = async (data = false) => {
     if (data) {
       props.setZIndex(-1);
-      console.log("Setting data", data);
+      console.log('Setting data', data);
       props.userLoggedOutAction();
     } else {
       try {
@@ -32,7 +32,7 @@ function HomePage(props) {
         props.setZIndex(-1);
         let data = JSON.parse(res);
         if (data) {
-          console.log("Data found in db", data);
+          console.log('Data found in db', data);
           props.userLoggedInAction(data);
         } else {
           props.userLoggedOutAction();
@@ -43,14 +43,17 @@ function HomePage(props) {
       }
     }
   };
-
-  useEffect(() => {
+  const INITILIZE_APP = () => {
     setTimeout(() => {
       getData();
     }, 1500);
     props.RESET_REDUX_DATA();
-    console.log("REDUX DATA RESET");
+    console.log('REDUX DATA RESET');
     // props.setZIndex(10);
+  };
+
+  useEffect(() => {
+    INITILIZE_APP();
   }, []);
 
   if (props.loginAuthReducer.isSearching) {
@@ -63,7 +66,7 @@ function HomePage(props) {
           name="searching"
           component={DelayingScreen}
           options={{
-            title: "",
+            title: '',
             headerStyle: {
               height: 0,
             },
@@ -80,24 +83,24 @@ function HomePage(props) {
   );
 }
 export default connect(
-  ({ loginAuthReducer }) => {
-    return { loginAuthReducer };
+  ({loginAuthReducer}) => {
+    return {loginAuthReducer};
   },
-  { setZIndex, RESET_REDUX_DATA, userLoggedInAction, userLoggedOutAction }
+  {setZIndex, RESET_REDUX_DATA, userLoggedInAction, userLoggedOutAction},
 )(HomePage);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   hrLine: {
-    borderColor: "orange",
+    borderColor: 'orange',
     borderBottomWidth: 2,
-    width: "95%",
+    width: '95%',
     height: 0,
   },
 });

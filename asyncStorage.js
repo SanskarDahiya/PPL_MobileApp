@@ -1,6 +1,6 @@
-import { AsyncStorage } from "react-native";
+import {AsyncStorage} from 'react-native';
 
-const userid = "userid";
+const userid = 'userid';
 export const addDataToStorage = async data => {
   AsyncStorage.setItem(userid, data);
 };

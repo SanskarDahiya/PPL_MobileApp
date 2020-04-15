@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Animated, View, Text, Dimensions, StyleSheet } from "react-native";
-import { connect } from "react-redux";
+import React, {useState, useEffect} from 'react';
+import {Animated, View, Text, Dimensions, StyleSheet} from 'react-native';
+import {connect} from 'react-redux';
 var interval;
-const DelayingScreen = (props) => {
-  const screenWidth = Math.round(Dimensions.get("window").width);
-  const screenHeight = Math.round(Dimensions.get("window").height);
+const DelayingScreen = props => {
+  const screenWidth = Math.round(Dimensions.get('window').width);
+  const screenHeight = Math.round(Dimensions.get('window').height);
   const [rotate1] = useState(new Animated.Value(0));
   const [zIndex, zIndexUpdater] = useState(-1);
   // console.log(rotate1, "<><>", props);
@@ -13,13 +13,13 @@ const DelayingScreen = (props) => {
     if (props.zIndex == -1) {
       window.clearInterval(interval);
     }
-    console.log("TO 360");
+    console.log('TO 360');
     Animated.timing(rotate1, {
       toValue: 360,
       duration: 1000,
     }).start();
     setTimeout(() => {
-      console.log("TO 0");
+      console.log('TO 0');
       Animated.timing(rotate1, {
         toValue: 0,
         duration: 1000,
@@ -29,6 +29,7 @@ const DelayingScreen = (props) => {
   useEffect(() => {
     if (props.zIndex != -1) {
       AnimationCode();
+      window.clearInterval(interval);
       interval = setInterval(() => {
         AnimationCode();
       }, 4000);
@@ -44,20 +45,19 @@ const DelayingScreen = (props) => {
     <View
       style={[
         {
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           right: 0,
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: props.backgroundColor || "grey",
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: props.backgroundColor || 'grey',
           width: screenWidth,
           height: screenHeight,
           zIndex: props.zIndex || -1,
           opacity: props.backgroundColor ? 1 : 0.8,
         },
-      ]}
-    >
+      ]}>
       <Animated.View
         style={[
           styles.circle,
@@ -78,18 +78,18 @@ const DelayingScreen = (props) => {
               {
                 rotate: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: ["0deg", "360deg"],
+                  outputRange: ['0deg', '360deg'],
                 }),
               },
             ],
           },
         ]}
-      ></Animated.View>
+      />
       <Animated.View
         style={[
           styles.circle,
           {
-            borderColor: "#ee830d",
+            borderColor: '#ee830d',
 
             transform: [
               {
@@ -107,27 +107,30 @@ const DelayingScreen = (props) => {
               {
                 rotate: rotate1.interpolate({
                   inputRange: [0, 360],
-                  outputRange: ["225deg", "45deg"],
+                  outputRange: ['225deg', '45deg'],
                 }),
               },
             ],
           },
         ]}
-      ></Animated.View>
-      <Text style={{ color: "white" }}>LOADING</Text>
+      />
+      <Text style={{color: 'white'}}>LOADING</Text>
     </View>
   );
 };
 const styles = StyleSheet.create({
   circle: {
-    position: "absolute",
+    position: 'absolute',
     borderWidth: 5,
     borderRadius: 15,
     height: 100,
     width: 100,
-    borderColor: "orange",
+    borderColor: 'orange',
   },
 });
-export default connect((states) => {
-  return { zIndex: states.zIndex.value };
-}, null)(DelayingScreen);
+export default connect(
+  states => {
+    return {zIndex: states.zIndex.value};
+  },
+  null,
+)(DelayingScreen);

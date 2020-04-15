@@ -1,35 +1,35 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 import {
   StyleSheet,
   Text,
   View,
   Animated,
   TouchableWithoutFeedback,
-} from "react-native";
-import { connect } from "react-redux";
-import FooterBarProfile from "./FooterBarProfile";
-import MyAllPosts from "./MyAllPosts";
-import { setZIndex } from "../REDUX/actions/zIndexAction";
-import BottomFiltersButtons from "./BottomFiltersButtons";
-import DelayingScreen from "./DelayingScreen";
+} from 'react-native';
+import {connect} from 'react-redux';
+import FooterBarProfile from './FooterBarProfile';
+import MyAllPosts from './MyAllPosts';
+import {setZIndex} from '../REDUX/actions/zIndexAction';
+import BottomFiltersButtons from './BottomFiltersButtons';
+import DelayingScreen from './DelayingScreen';
 
-const ProfileHomePage = (props) => {
+const ProfileHomePage = props => {
   const [SwipAnimUpload] = useState(new Animated.Value(100));
   const [SwipAnimFilter] = useState(new Animated.Value(100));
 
-  const AnimateUploadBtn = (val = "def") => {
-    console.log(SwipAnimUpload, "<<upload");
+  const AnimateUploadBtn = (val = 'def') => {
+    console.log(SwipAnimUpload, '<<upload');
     Animated.timing(SwipAnimUpload, {
       toValue:
-        val !== "def" ? val : JSON.stringify(SwipAnimUpload) === "0" ? 100 : 0,
+        val !== 'def' ? val : JSON.stringify(SwipAnimUpload) === '0' ? 100 : 0,
       duration: 200,
     }).start();
   };
 
-  const AnimateFilterBtn = (val = "def") => {
+  const AnimateFilterBtn = (val = 'def') => {
     Animated.timing(SwipAnimFilter, {
       toValue:
-        val !== "def" ? val : JSON.stringify(SwipAnimFilter) === "0" ? 100 : 0,
+        val !== 'def' ? val : JSON.stringify(SwipAnimFilter) === '0' ? 100 : 0,
       duration: 200,
     }).start();
   };
@@ -62,97 +62,97 @@ const ProfileHomePage = (props) => {
 };
 
 export default connect(
-  (state) => {
-    return { zIndexVisibility: state.zIndex.value };
+  state => {
+    return {zIndexVisibility: state.zIndex.value};
   },
-  { setZIndex }
+  {setZIndex},
 )(ProfileHomePage);
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
+    position: 'relative',
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
 
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
   },
   uploadFilterButtons: {
-    position: "absolute",
-    backgroundColor: "#ffa21d",
-    width: "100%",
+    position: 'absolute',
+    backgroundColor: '#ffa21d',
+    width: '100%',
     bottom: 0,
-    right: "100%",
+    right: '100%',
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   bottomBtn: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
   },
   navtext: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    borderColor: "white",
-    width: "100%",
+    borderColor: 'white',
+    width: '100%',
     borderBottomWidth: 5,
-    color: "white",
-    textAlign: "center",
+    color: 'white',
+    textAlign: 'center',
   },
   behindNavbar: {
     flex: 1,
     zIndex: 5,
-    width: "100%",
-    position: "absolute",
+    width: '100%',
+    position: 'absolute',
     top: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffa21d",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffa21d',
   },
   topNavBtnContainer: {
     flex: 1,
-    justifyContent: "flex-end",
-    position: "absolute",
+    justifyContent: 'flex-end',
+    position: 'absolute',
     top: -75,
     left: -75,
-    backgroundColor: "#ffa21d",
+    backgroundColor: '#ffa21d',
     minHeight: 150,
     minWidth: 150,
     borderRadius: 100,
     zIndex: 5,
   },
   topNavBtn: {
-    flexDirection: "row",
+    flexDirection: 'row',
     flex: 1,
-    maxHeight: "50%",
+    maxHeight: '50%',
   },
   text: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   footer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    width: "100%",
-    position: "relative",
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    width: '100%',
+    position: 'relative',
   },
   PostContainer: {
     flex: 10,
-    backgroundColor: "silver",
+    backgroundColor: 'silver',
   },
 });
 
-const MainBodyContent_ = (props) => {
+const MainBodyContent_ = props => {
   // console.log(, "<<");
   return (
     <View style={[styles.container, styles.PostContainer]}>
@@ -166,19 +166,17 @@ const MainBodyContent_ = (props) => {
           {
             right: props.SwipAnimUpload.interpolate({
               inputRange: [0, 100],
-              outputRange: ["0%", "100%"],
+              outputRange: ['0%', '100%'],
             }),
           },
-        ]}
-      >
+        ]}>
         <TouchableWithoutFeedback onPress={() => {}}>
           <Text style={[styles.navtext]}>Upload Post</Text>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => {
             // console.log("This is Add Category btn");
-          }}
-        >
+          }}>
           <Text style={[styles.navtext]}>Add Category</Text>
         </TouchableWithoutFeedback>
       </Animated.View>
@@ -192,4 +190,7 @@ const MainBodyContent_ = (props) => {
   );
 };
 
-const MainBodyContent = connect(null, null)(MainBodyContent_);
+const MainBodyContent = connect(
+  null,
+  null,
+)(MainBodyContent_);

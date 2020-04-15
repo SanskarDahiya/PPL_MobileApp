@@ -1,20 +1,19 @@
-import React from "react";
-import { Text, View } from "react-native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import { MaterialCommunityIcons, EvilIcons } from "react-native-vector-icons";
-import ProfileHomePage from "./ProfileHomePage";
-import ProfileUpload from "./ProfileUpload";
-import POSTWRAPPER from "./POSTWRAPPER";
-import { ScrollView } from "react-native-gesture-handler";
-import ProfileUser from "./ProfileUser";
+import React from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {MaterialCommunityIcons, EvilIcons} from 'react-native-vector-icons';
+import ProfileHomePage from './ProfileHomePage';
+import ProfileUpload from './ProfileUpload';
+import POSTWRAPPER from './POSTWRAPPER';
+import {ScrollView} from 'react-native-gesture-handler';
+import ProfileUser from './ProfileUser';
 const Tab = createBottomTabNavigator();
 const profileStack = createStackNavigator();
 
-const ProfileHomeDivider = (props) => {
+const ProfileHomeDivider = props => {
   // console.log("Profile Divider......", props.route.params);
-  const singlePostWrapper = (props) => {
-    console.log(props.route.params._id, "singlepost wrapper");
+  const singlePostWrapper = props => {
+    console.log(props.route.params._id, 'singlepost wrapper');
     return (
       <ScrollView>
         <POSTWRAPPER {...props.route.params} isSinglePost={true} />
@@ -27,9 +26,9 @@ const ProfileHomeDivider = (props) => {
       <profileStack.Screen
         name="allpost"
         component={ProfileHomePage}
-        initialParams={{ listen: props.navigation.addListener }}
+        initialParams={{listen: props.navigation.addListener}}
         options={{
-          title: "",
+          title: '',
           headerStyle: {
             height: 0,
           },
@@ -39,7 +38,7 @@ const ProfileHomeDivider = (props) => {
         name="singlepost"
         component={singlePostWrapper}
         options={{
-          title: "",
+          title: '',
           headerStyle: {
             // height: 0,
           },
@@ -49,10 +48,10 @@ const ProfileHomeDivider = (props) => {
   );
 };
 
-const ProfileUserDivider = (props) => {
+const ProfileUserDivider = props => {
   // console.log("UserProfileDivider", props.route.params);
-  const singlePostWrapper = (props) => {
-    console.log(props.route.params._id, "singlepost wrapper");
+  const singlePostWrapper = props => {
+    console.log(props.route.params._id, 'singlepost wrapper');
     return (
       <ScrollView>
         <POSTWRAPPER {...props.route.params} isSinglePost={true} />
@@ -70,7 +69,7 @@ const ProfileUserDivider = (props) => {
           addListenToTab: props.navigation.addListener,
         }}
         options={{
-          title: "",
+          title: '',
           headerStyle: {
             height: 0,
           },
@@ -80,7 +79,7 @@ const ProfileUserDivider = (props) => {
         name="tosinglepost"
         component={singlePostWrapper}
         options={{
-          title: "",
+          title: '',
           headerStyle: {
             height: 0,
           },
@@ -90,23 +89,22 @@ const ProfileUserDivider = (props) => {
   );
 };
 
-const Profile = (props) => {
+const Profile = props => {
   return (
     <Tab.Navigator
       initialRouteName="home"
       tabBarOptions={{
-        activeTintColor: "black",
+        activeTintColor: 'black',
         labelStyle: {
           fontSize: 10,
         },
-      }}
-    >
+      }}>
       <Tab.Screen
         name="home"
         component={ProfileHomeDivider}
         options={{
-          tabBarLabel: "HOME",
-          tabBarIcon: ({ color, size }) => (
+          tabBarLabel: 'HOME',
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
         }}
@@ -115,8 +113,8 @@ const Profile = (props) => {
         name="upload"
         component={ProfileUpload}
         options={{
-          tabBarLabel: "UPLOAD",
-          tabBarIcon: ({ color, size }) => (
+          tabBarLabel: 'UPLOAD',
+          tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons name="plus" color={color} size={size} />
           ),
         }}
@@ -124,10 +122,10 @@ const Profile = (props) => {
       <Tab.Screen
         name="profile"
         component={ProfileUserDivider}
-        initialParams={{ ...props.route.params }}
+        initialParams={{...props.route.params}}
         options={{
-          tabBarLabel: "PROFILE",
-          tabBarIcon: ({ color, size }) => (
+          tabBarLabel: 'PROFILE',
+          tabBarIcon: ({color, size}) => (
             <EvilIcons name="user" color={color} size={size} />
           ),
         }}

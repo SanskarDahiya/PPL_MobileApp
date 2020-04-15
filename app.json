@@ -1,17 +1,4 @@
 {
-    "expo": {
-        "name": "PPL",
-        "icon": "./assets/icon.png",
-        "version": "1.0.2",
-        "slug": "PPL_MobileApp",
-        "sdkVersion": "36.0.0",
-        "android": {
-            "package": "sanskardahiya.ppl",
-            "versionCode": 1
-        },
-        "ios": {
-            "bundleIdentifier": "sanskardahiya.ppl",
-            "buildNumber": "1.0.2"
-        }
-    }
+  "name": "PPL",
+  "displayName": "PPL"
 }
