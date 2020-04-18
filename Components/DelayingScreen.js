@@ -17,12 +17,14 @@ const DelayingScreen = props => {
     Animated.timing(rotate1, {
       toValue: 360,
       duration: 1000,
+      useNativeDriver: true,
     }).start();
     setTimeout(() => {
       console.log('TO 0');
       Animated.timing(rotate1, {
         toValue: 0,
         duration: 1000,
+        useNativeDriver: true,
       }).start();
     }, 2000);
   };

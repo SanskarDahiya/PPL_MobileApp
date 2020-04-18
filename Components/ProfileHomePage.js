@@ -23,6 +23,7 @@ const ProfileHomePage = props => {
       toValue:
         val !== 'def' ? val : JSON.stringify(SwipAnimUpload) === '0' ? 100 : 0,
       duration: 200,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -31,6 +32,7 @@ const ProfileHomePage = props => {
       toValue:
         val !== 'def' ? val : JSON.stringify(SwipAnimFilter) === '0' ? 100 : 0,
       duration: 200,
+      useNativeDriver: true,
     }).start();
   };
 
@@ -40,8 +42,6 @@ const ProfileHomePage = props => {
       <DelayingScreen />
       <View style={[styles.container]}>
         {/* TOP PORTION */}
-        {/* <TopNavigationSide logout={logout} /> */}
-
         {/* MaIN BODY POSTS */}
         <MainBodyContent
           {...props}
