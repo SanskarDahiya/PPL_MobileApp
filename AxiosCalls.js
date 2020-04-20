@@ -1,26 +1,13 @@
 import Axios from 'axios';
-// const urlPrefix = 'http://192.168.43.116:8088/';
-const urlPrefix = 'https://pplbackend.herokuapp.com/';
+const urlPrefix = 'http://192.168.43.116:8088/';
+// const urlPrefix = 'https://pplbackend.herokuapp.com/';
 export const LoginCall = data => Axios.post(urlPrefix + 'user/login', data);
 export const SignupCall = data =>
   Axios.post(urlPrefix + 'user/registration', data);
 
 export const PostUploadCall = data =>
   new Promise((resolve, reject) => {
-    let photo = data.photo;
-    const photoExtension = photo.uri.substr(photo.uri.lastIndexOf('.') + 1);
-    photo = {
-      uri: photo.uri,
-      type: photo.type + '/' + photoExtension,
-      name: '1.' + photoExtension,
-    };
-
-    let f = new FormData();
-    Object.keys(data).forEach(key => {
-      f.append(key, JSON.stringify(data[key]));
-    });
-    f.append('photo', {...photo});
-    Axios.post(urlPrefix + 'post/upload', f)
+    Axios.post(urlPrefix + 'post/upload', data)
       .then(res => {
         resolve(res);
       })

@@ -8,9 +8,10 @@ import {
   TextInput,
 } from 'react-native';
 import {Picker} from '@react-native-community/picker';
-
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
+import DocumentPicker from 'react-native-document-picker';
+
 import {PostUploadCall} from '../AxiosCalls';
 import {getDataFromStorage} from '../asyncStorage';
 import {setZIndex} from '../REDUX/actions/zIndexAction';
@@ -38,45 +39,83 @@ const UploadPostTopPortion = props => {
 
   const handlePhotoUpload = async () => {
     try {
-      let permissionResult = await ImagePicker.requestCameraRollPermissionsAsync();
-      if (permissionResult.granted === false) {
-        alert('Permission to access camera roll is required!');
-        return;
-      }
-      let pickerResult = await ImagePicker.launchImageLibraryAsync({
-        // mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        quality: 1,
+      const options = {
+        title: 'Select Post to Upload',
+        customButtons: [{name: 'Video', title: 'Choose Video'}],
+        storageOptions: {
+          skipBackup: true,
+          path: 'ppl/images',
+        },
+      };
+      ImagePicker.showImagePicker(options, response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+          console.log('User tapped custom button: ', response.customButton);
+          DocumentPicker.pick({
+            type: [DocumentPicker.types.video],
+          })
+            .then(res => {
+              imageUrlUpdate(res);
+            })
+            .catch(err => {
+              console.log('err');
+            });
+        } else {
+          // You can also display the image using data:
+          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+
+          imageUrlUpdate({...response, data: undefined});
+        }
       });
-      if (!pickerResult.cancelled) {
-        delete pickerResult.cancelled;
-        imageUrlUpdate(pickerResult);
-      }
     } catch (err) {
-      console.log(err, 'ERROR AT IMAGE PICKER UPLOADING POST');
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User cancelled image picker');
+
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        console.log(err, 'ERROR AT IMAGE PICKER UPLOADING POST');
+      }
     }
   };
 
   const handleUploadButton = async () => {
     uploadAlertUpdater(false);
     try {
-      if (title.trim() != '' && category && imageUrl) {
+      if (title.trim() !== '' && category && imageUrl) {
         props.setZIndex(10);
         let {
           _id,
           data: {username},
         } = JSON.parse(await getDataFromStorage());
-
-        let {
-          data: {result},
-        } = await PostUploadCall({
+        let dataToBeSent = {
           uploadedBy: {_id, username},
           title,
           category,
           photo: imageUrl,
+        };
+
+        let formData = new FormData();
+        Object.keys(dataToBeSent).forEach(key => {
+          formData.append(key, JSON.stringify(dataToBeSent[key]));
         });
+        console.log(imageUrl);
+        formData.append('fileUpload', {
+          type: imageUrl.type,
+          name: imageUrl.fileName || imageUrl.name,
+          uri: imageUrl.uri,
+        });
+
+        let {
+          data: {result},
+        } = await PostUploadCall(formData);
         console.log(result, '<<<response');
-        props.navigation.navigate('home');
+        if (!result) {
+          throw new Error('Post Upload Failed');
+        }
+        // props.navigation.navigate('home');
       } else {
         console.log('No POST to Upload');
         uploadAlertUpdater(true);
