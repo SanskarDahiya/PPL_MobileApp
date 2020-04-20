@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   Text,
-  StyleSheet,
   View,
   Image,
   TouchableWithoutFeedback,
@@ -9,10 +8,14 @@ import {
   Button,
   TextInput,
 } from 'react-native';
+import styles from '../css/styles';
+import Video from 'react-native-video';
+
 import {like_comment} from '../AxiosCalls';
 import {getDataFromStorage} from '../asyncStorage';
 import {connect} from 'react-redux';
 import {updatePostAtIndex} from '../REDUX/actions/mypostAction';
+import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 
 const USERIMAGE = require('../images/ppl/img_6.png');
 const bottomIcons = [
@@ -22,6 +25,8 @@ const bottomIcons = [
   require('../images/ppl/icon_002.png'),
   require('../images/ppl/icon_003.png'),
 ];
+const screenWidth = Math.round(Dimensions.get('window').width);
+const screenHeight = Math.round(Dimensions.get('window').height);
 
 const POSTWRAPPER = originalprops => {
   const [props, propsUpdater] = useState({...originalprops});
@@ -36,7 +41,6 @@ const POSTWRAPPER = originalprops => {
   }
 
   // Setting photo height
-  const screenWidth = Math.round(Dimensions.get('window').width);
   let PhotoHeight = 100;
   if (props.photo)
     PhotoHeight = (props.photo.height / props.photo.width) * screenWidth - 20;
@@ -201,17 +205,21 @@ const POSTWRAPPER = originalprops => {
           }}>
           {/* POST IMAGE */}
           {props.photo ? (
-            <Image
-              source={{
-                uri: props.photo?.uri || '',
-              }}
-              style={{
-                flex: 1,
-                width: '100%',
-                resizeMode: 'contain',
-                minHeight: PhotoHeight,
-              }}
-            />
+            props.photo.type.toString().search('video') >= 0 ? (
+              <CustomizeVideoComponent {...props.photo} />
+            ) : (
+              <Image
+                source={{
+                  uri: props.photo?.uri || '',
+                }}
+                style={{
+                  flex: 1,
+                  width: '100%',
+                  resizeMode: 'contain',
+                  minHeight: PhotoHeight,
+                }}
+              />
+            )
           ) : (
             <View />
           )}
@@ -258,63 +266,6 @@ export default connect(
   null,
   {updatePostAtIndex},
 )(POSTWRAPPER);
-
-const styles = StyleSheet.create({
-  MainBody: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f1eff2',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderTopWidth: 2,
-    borderColor: '#e87818',
-    marginTop: 10,
-  },
-  userInfo_dateTime: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  topPortion: {
-    flexDirection: 'row',
-  },
-  title: {
-    flex: 1,
-    color: '#e87818',
-    fontSize: 20,
-    lineHeight: 20,
-    paddingVertical: 5,
-  },
-  categori: {
-    position: 'relative',
-    flexDirection: 'row',
-    backgroundColor: '#ee830d',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderLeftColor: '#f3891f',
-    borderLeftWidth: 4,
-  },
-  btmButton: {
-    backgroundColor: '#f3891f',
-    flexDirection: 'row',
-    borderColor: '#ee830d',
-    borderRadius: 3,
-    borderWidth: 1,
-    paddingHorizontal: '1%',
-    paddingVertical: '0.5%',
-  },
-  bottomBtns: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  topline: {
-    width: '100%',
-  },
-});
 
 const CommentWrapper = props => {
   const [comment, commentUpdater] = useState('');
@@ -396,5 +347,126 @@ const CommentWrapper = props => {
         </View>
       </View>
     </View>
+  );
+};
+
+const CustomizeVideoComponent = props => {
+  let refVideo = false;
+  const [isVideoPaused, isVideoPausedUpdater] = useState(true);
+  const [videoDimention, videoDimentionUpdater] = useState({
+    width: '100%',
+    height: '100%',
+  });
+  const [videoTimeProgress, videoTimeProgressUpdater] = useState('00:00/00:00');
+
+  const onLoadVideo = ({naturalSize}) => {
+    let photoHeight = (naturalSize.height / naturalSize.width) * screenWidth;
+    videoDimentionUpdater({width: '100%', height: photoHeight});
+    console.log(naturalSize, 'onLoad');
+  };
+
+  const onProgressVideo = ({
+    currentTime,
+    seekableDuration,
+    playableDuration,
+  }) => {
+    currentTime = new Date(currentTime * 1000)
+      .toISOString()
+      .split('T')[1]
+      .split('.')[0]
+      .toString();
+
+    playableDuration = new Date(playableDuration * 1000)
+      .toISOString()
+      .split('T')[1]
+      .split('.')[0]
+      .toString();
+    seekableDuration = new Date(seekableDuration * 1000)
+      .toISOString()
+      .split('T')[1]
+      .split('.')[0]
+      .toString();
+
+    videoTimeProgressUpdater(
+      currentTime + '/' + playableDuration + '//' + seekableDuration,
+    );
+  };
+  return (
+    <>
+      <TouchableWithoutFeedback
+        onPress={() => {
+          isVideoPausedUpdater(!isVideoPaused);
+          console.log('press', isVideoPaused);
+        }}>
+        <View
+          style={[
+            {
+              width: '100%',
+              flex: 1,
+            },
+          ]}>
+          <View
+            style={{
+              position: 'absolute',
+              borderWidth: 2,
+              borderColor: 'blue',
+              height: '50%',
+              width: '100%',
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 4,
+              backgroundColor: 'rgba(0,0,0,0.7)',
+            }}>
+            <View>
+              <Text>{isVideoPaused ? 'Click to play' : 'click to pause'}</Text>
+            </View>
+            <TouchableNativeFeedback
+              onProgress={() => {
+                console.log('press');
+              }}
+              style={{borderWidth: 5}}>
+              <View>
+                <Text style={{color: 'white'}}>Time: {videoTimeProgress}</Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+          <Video
+            source={{uri: props.uri}} // Can be a URL or a local file.
+            ref={ref => {
+              refVideo = ref;
+            }}
+            onBuffer={() => {
+              console.log('buffer');
+            }}
+            onError={() => {
+              console.log('Vide Error');
+            }}
+            bufferConfig={{
+              minBufferMs: 15000,
+              maxBufferMs: 50000,
+              bufferForPlaybackMs: 2500,
+              bufferForPlaybackAfterRebufferMs: 5000,
+            }}
+            // controls={true}
+            onEnd={() => {
+              console.log('Video ENd here');
+              isVideoPausedUpdater(true);
+              refVideo && refVideo.seek(0);
+            }}
+            paused={isVideoPaused}
+            onProgress={onProgressVideo}
+            onLoad={onLoadVideo}
+            onLoadStart={() => {
+              console.log('onLoadStart');
+            }}
+            resizeMode="contain"
+            // onBuffer={this.onBuffer} // Callback when remote video is buffering
+            // onError={this.videoError} // Callback when video cannot be loaded
+            style={[videoDimention, {borderWidth: 1}]}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    </>
   );
 };

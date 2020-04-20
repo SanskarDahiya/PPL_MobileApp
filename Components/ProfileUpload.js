@@ -115,7 +115,7 @@ const UploadPostTopPortion = props => {
         if (!result) {
           throw new Error('Post Upload Failed');
         }
-        // props.navigation.navigate('home');
+        props.navigation.navigate('home');
       } else {
         console.log('No POST to Upload');
         uploadAlertUpdater(true);
