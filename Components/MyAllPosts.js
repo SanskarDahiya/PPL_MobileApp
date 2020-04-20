@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, View, Text, Button, Dimensions} from 'react-native';
+import {
+  ScrollView,
+  FlatList,
+  View,
+  Text,
+  Button,
+  Dimensions,
+} from 'react-native';
 import POSTWRAPPER from './POSTWRAPPER';
 import {connect} from 'react-redux';
 import {filterData} from '../AxiosCalls';
@@ -23,7 +30,7 @@ const MyAllPosts = props => {
   }, [props.getAllPosts]);
 
   useEffect(() => {
-    scrollViewRef.scrollTo({x: 0, animated: true});
+    if (scrollViewRef) scrollViewRef.scrollTo({x: 0, animated: true});
     allPostFetchedUpdater(false);
   }, [props.postFilter]);
   useEffect(() => {
@@ -32,7 +39,7 @@ const MyAllPosts = props => {
         if (props.navigation.isFocused()) {
           // e.preventDefault();
           console.log('Homebtn Clicked', isToTop);
-          scrollViewRef.scrollTo({x: 0, animated: true});
+          if (scrollViewRef) scrollViewRef.scrollTo({x: 0, animated: true});
 
           if (isToTop && !ifHomeButtonIsPressedOnTopForNewPost) {
             ifHomeButtonIsPressedOnTopForNewPost = true;
@@ -99,6 +106,23 @@ const MyAllPosts = props => {
     props.setZIndex(10);
     getNewPosts(0);
   }, []);
+
+  return (
+    <View>
+      <Text>all posts</Text>
+      <FlatList
+        data={props.getAllPosts}
+        renderItem={({index, item}) => {
+          console.log(index);
+
+          return (
+            <POSTWRAPPER {...item} ToSinglePost={props.navigation.navigate} />
+          );
+        }}
+        keyExtractor={item => item._id}
+      />
+    </View>
+  );
 
   return (
     <View>

@@ -16,6 +16,7 @@ import {getDataFromStorage} from '../asyncStorage';
 import {connect} from 'react-redux';
 import {updatePostAtIndex} from '../REDUX/actions/mypostAction';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
+const RNFS = require('react-native-fs');
 
 const USERIMAGE = require('../images/ppl/img_6.png');
 const bottomIcons = [
@@ -352,7 +353,7 @@ const CommentWrapper = props => {
 
 const CustomizeVideoComponent = props => {
   let refVideo = false;
-  const [isVideoPaused, isVideoPausedUpdater] = useState(true);
+  const [isVideoPaused, isVideoPausedUpdater] = useState(false);
   const [videoDimention, videoDimentionUpdater] = useState({
     width: '100%',
     height: '100%',
@@ -391,6 +392,37 @@ const CustomizeVideoComponent = props => {
       currentTime + '/' + playableDuration + '//' + seekableDuration,
     );
   };
+  const useStorage4Video = async () => {
+    let filename = props.filename;
+    let videoPath = RNFS.DocumentDirectoryPath + '/' + filename;
+    console.log(videoPath);
+
+    RNFS.exists(videoPath).then(exists => {
+      if (exists) {
+        console.log('Already downloaded');
+      } else {
+        console.log('not found');
+        RNFS.downloadFile({
+          fromUrl: props.uri,
+          toFile: videoPath.replace(/%20/g, '_'),
+          background: true,
+        })
+          .promise.then(res => {
+            console.log('File Downloaded', res);
+          })
+          .catch(err => {
+            console.log('err downloadFile', err);
+          });
+      }
+    });
+  };
+  useEffect(() => {
+    console.log('123');
+    useStorage4Video();
+    return () => {
+      console.log('Component unMount');
+    };
+  }, []);
   return (
     <>
       <TouchableWithoutFeedback
@@ -432,7 +464,7 @@ const CustomizeVideoComponent = props => {
             </TouchableNativeFeedback>
           </View>
           <Video
-            source={{uri: props.uri}} // Can be a URL or a local file.
+            source={{uri: RNFS.DocumentDirectoryPath + '/' + props.filename}} // Can be a URL or a local file.
             ref={ref => {
               refVideo = ref;
             }}
