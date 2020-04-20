@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createStackNavigator} from '@react-navigation/stack';
-import {MaterialCommunityIcons, EvilIcons} from 'react-native-vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/FontAwesome';
 import ProfileHomePage from './ProfileHomePage';
 import ProfileUpload from './ProfileUpload';
 import POSTWRAPPER from './POSTWRAPPER';
@@ -126,7 +126,7 @@ const Profile = props => {
         options={{
           tabBarLabel: 'PROFILE',
           tabBarIcon: ({color, size}) => (
-            <EvilIcons name="user" color={color} size={size} />
+            <MaterialCommunityIcons name="user" color={color} size={size} />
           ),
         }}
       />

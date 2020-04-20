@@ -4,10 +4,11 @@ import {
   Text,
   Image,
   TouchableWithoutFeedback,
-  Picker,
   StyleSheet,
   TextInput,
 } from 'react-native';
+import {Picker} from '@react-native-community/picker';
+
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import {PostUploadCall} from '../AxiosCalls';

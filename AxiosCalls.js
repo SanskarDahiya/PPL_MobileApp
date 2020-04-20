@@ -1,42 +1,42 @@
-import Axios from "axios";
-const urlPrefix = "http://192.168.43.116:8088/";
-// const urlPrefix = "https://pplbackend.herokuapp.com/";
-export const LoginCall = (data) => Axios.post(urlPrefix + "user/login", data);
-export const SignupCall = (data) =>
-  Axios.post(urlPrefix + "user/registration", data);
+import Axios from 'axios';
+// const urlPrefix = 'http://192.168.43.116:8088/';
+const urlPrefix = 'https://pplbackend.herokuapp.com/';
+export const LoginCall = data => Axios.post(urlPrefix + 'user/login', data);
+export const SignupCall = data =>
+  Axios.post(urlPrefix + 'user/registration', data);
 
-export const PostUploadCall = (data) =>
+export const PostUploadCall = data =>
   new Promise((resolve, reject) => {
     let photo = data.photo;
-    const photoExtension = photo.uri.substr(photo.uri.lastIndexOf(".") + 1);
+    const photoExtension = photo.uri.substr(photo.uri.lastIndexOf('.') + 1);
     photo = {
       uri: photo.uri,
-      type: photo.type + "/" + photoExtension,
-      name: "1." + photoExtension,
+      type: photo.type + '/' + photoExtension,
+      name: '1.' + photoExtension,
     };
 
     let f = new FormData();
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       f.append(key, JSON.stringify(data[key]));
     });
-    f.append("photo", { ...photo });
-    Axios.post(urlPrefix + "post/upload", f)
-      .then((res) => {
+    f.append('photo', {...photo});
+    Axios.post(urlPrefix + 'post/upload', f)
+      .then(res => {
         resolve(res);
       })
-      .catch((err) => {
+      .catch(err => {
         reject(err);
       });
   });
 
-export const getPosts = (limit) =>
-  Axios.post(urlPrefix + "post/getpost", { limit });
+export const getPosts = limit =>
+  Axios.post(urlPrefix + 'post/getpost', {limit});
 
-export const like_comment = (data) =>
-  Axios.post(urlPrefix + "post/likecomment", data);
+export const like_comment = data =>
+  Axios.post(urlPrefix + 'post/likecomment', data);
 
-export const filterData = (data) =>
-  Axios.post(urlPrefix + "post/filter", { ...data });
+export const filterData = data =>
+  Axios.post(urlPrefix + 'post/filter', {...data});
 
 export const getUserPosts = (_id, offset) =>
-  Axios.post(urlPrefix + "post/getPostById", { _id, offset });
+  Axios.post(urlPrefix + 'post/getPostById', {_id, offset});

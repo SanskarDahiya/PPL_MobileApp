@@ -1,15 +1,15 @@
-export const encryptPassword = (data) => SHA256(data);
+export const encryptPassword = data => SHA256(data);
 // new Promise((resolve, reject) => {
 //   sha256(data).then((hash) => {
 //     resolve(hash);
 //   });
 // });
 
-console.log(SHA256("123456789"), "<<<<decrypted password"); // [{id: 1}, {id: 2}]
+// console.log(SHA256("123456789"), "<<<<decrypted password"); // [{id: 1}, {id: 2}]
 
 export const comparePassword = (data, hash_) =>
   new Promise((resolve, reject) => {
-    sha256(data).then((hash) => {
+    sha256(data).then(hash => {
       resolve(hash === hash_);
     });
   });
@@ -113,7 +113,7 @@ function SHA256(s) {
       0x90befffa,
       0xa4506ceb,
       0xbef9a3f7,
-      0xc67178f2
+      0xc67178f2,
     );
 
     var HASH = new Array(
@@ -124,7 +124,7 @@ function SHA256(s) {
       0x510e527f,
       0x9b05688c,
       0x1f83d9ab,
-      0x5be0cd19
+      0x5be0cd19,
     );
     var W = new Array(64);
     var a, b, c, d, e, f, g, h, i, j;
@@ -146,13 +146,13 @@ function SHA256(s) {
           W[j] = safe_add(
             safe_add(
               safe_add(Gamma1256(W[j - 2]), W[j - 7]),
-              Gamma0256(W[j - 15])
+              Gamma0256(W[j - 15]),
             ),
-            W[j - 16]
+            W[j - 16],
           );
         T1 = safe_add(
           safe_add(safe_add(safe_add(h, Sigma1256(e)), Ch(e, f, g)), K[j]),
-          W[j]
+          W[j],
         );
         T2 = safe_add(Sigma0256(a), Maj(a, b, c));
         h = g;
@@ -191,9 +191,9 @@ function SHA256(s) {
   }
 
   function Utf8Encode(string) {
-    string = string.replace(/\r\n/g, "\n");
+    string = string.replace(/\r\n/g, '\n');
 
-    var utftext = "";
+    var utftext = '';
 
     for (var n = 0; n < string.length; n++) {
       var c = string.charCodeAt(n);
@@ -217,9 +217,9 @@ function SHA256(s) {
   }
 
   function binb2hex(binarray) {
-    var hex_tab = hexcase ? "0123456789ABCDEF" : "0123456789abcdef";
+    var hex_tab = hexcase ? '0123456789ABCDEF' : '0123456789abcdef';
 
-    var str = "";
+    var str = '';
 
     for (var i = 0; i < binarray.length * 4; i++) {
       str +=
