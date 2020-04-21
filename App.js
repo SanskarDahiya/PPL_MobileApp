@@ -9,6 +9,7 @@ import {linkingConfig} from './Components/DeepLinking/linkingConfig';
 export default function App() {
   const ref = useRef();
 
+  const [isReady, setIsReady] = React.useState(false);
   const [initialState, setInitialState] = React.useState();
 
   const {getInitialState} = useLinking(ref, linkingConfig);
@@ -19,7 +20,7 @@ export default function App() {
       new Promise(resolve =>
         // Timeout in 150ms if `getInitialState` doesn't resolve
         // Workaround for https://github.com/facebook/react-native/issues/25675
-        setTimeout(resolve, 150),
+        setTimeout(resolve, 1000),
       ),
     ])
       .catch(e => {
@@ -29,6 +30,7 @@ export default function App() {
         console.log(state, 'states');
         if (state !== undefined) {
           setInitialState(state);
+          setIsReady(true);
         }
       });
   }, [getInitialState]);
@@ -36,7 +38,7 @@ export default function App() {
   return (
     <NavigationContainer initialState={initialState} ref={ref}>
       <Provider store={store}>
-        <HomePage />
+        <HomePage isExternalLink={isReady} />
       </Provider>
     </NavigationContainer>
   );

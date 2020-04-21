@@ -25,9 +25,8 @@
           <action android:name="android.intent.action.VIEW" />
           <category android:name="android.intent.category.DEFAULT" />
           <category android:name="android.intent.category.BROWSABLE" />
-          <data android:scheme="myppl" android:host="singlepost_id" />
+          <data android:scheme="myppl" />
           <data android:scheme="https" android:host="myppl.com" />
-
       </intent-filter>
       </activity>
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />

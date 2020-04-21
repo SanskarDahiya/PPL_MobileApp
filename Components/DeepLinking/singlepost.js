@@ -8,6 +8,13 @@ import {getPostById} from '../../AxiosCalls';
 import {ScrollView} from 'react-native-gesture-handler';
 
 const singlepost = props => {
+  console.log('This is single post');
+
+  const BACK = () => {
+    console.log(props.route, 'return null');
+
+    props.navigation.navigate(isAllowed ? 'PPL' : 'PPL LOGIN/SIGNUP');
+  };
   let _id = props.route.params.postid || false;
   if (!_id) {
     BACK();
@@ -15,9 +22,6 @@ const singlepost = props => {
   }
   let isAllowed = props.route.params.isAllowed;
   const [postData, postDataUpdater] = useState(false);
-  const BACK = () => {
-    props.navigation.navigate(isAllowed ? 'PPL' : 'PPL LOGIN/SIGNUP');
-  };
 
   useEffect(() => {
     if (_id) {
@@ -29,7 +33,7 @@ const singlepost = props => {
             alert('Invalid URL');
             BACK();
           } else {
-            console.log('data', result);
+            console.log('data');
             postDataUpdater({...result[0]});
           }
         })

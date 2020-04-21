@@ -7,6 +7,7 @@ import {
   Dimensions,
   Button,
   TextInput,
+  TouchableNativeFeedback,
 } from 'react-native';
 import styles from '../../css/styles';
 import Video from 'react-native-video';
@@ -15,7 +16,6 @@ import {like_comment} from '../../AxiosCalls';
 import {getDataFromStorage} from '../../asyncStorage';
 import {connect} from 'react-redux';
 import {updatePostAtIndex} from '../../REDUX/actions/mypostAction';
-import {TouchableNativeFeedback} from 'react-native-gesture-handler';
 import {DownloadVideo, getDownloadedFile} from '../SaveOffline/download';
 
 const USERIMAGE = require('../../images/ppl/img_6.png');
@@ -216,37 +216,30 @@ const POSTWRAPPER = originalprops => {
             marginVertical: 10,
           },
         ]}>
-        <TouchableWithoutFeedback
-          styles={{height: '100%', width: '100%'}}
-          onPress={() => {
-            ToSinglePost(props._id);
-          }}>
-          {/* POST IMAGE */}
-          {props.photo ? (
-            props.photo.type.toString().search('video') >= 0 ? (
-              <CustomizeVideoComponent
-                {...props.photo}
-                isSinglePost={props.isSinglePost}
-                ToSinglePost={() => ToSinglePost(props._id)}
-              />
-            ) : (
-              <Image
-                source={{
-                  uri: props.photo?.uri || '',
-                }}
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  resizeMode: 'contain',
-                  minHeight: PhotoHeight,
-                  minWidth: PhotoWidth,
-                }}
-              />
-            )
+        {/* POST IMAGE */}
+        {props.photo ? (
+          props.photo.type.toString().search('video') >= 0 ? (
+            <CustomizeVideoComponent
+              {...props.photo}
+              isSinglePost={props.isSinglePost}
+              ToSinglePost={() => ToSinglePost(props._id)}
+            />
           ) : (
-            <View />
-          )}
-        </TouchableWithoutFeedback>
+            <CustomImageComponent
+              ToSinglePost={() => {
+                ToSinglePost(props._id);
+              }}
+              {...{
+                uri: props.photo.uri,
+                filename: props.photo.filename,
+                height: PhotoHeight,
+                width: PhotoWidth,
+              }}
+            />
+          )
+        ) : (
+          <View />
+        )}
       </View>
       {/* BOTTOM BUTTONS */}
       <View style={styles.bottomBtns}>
@@ -469,6 +462,7 @@ const CustomizeVideoComponent = props => {
                 borderRadius: 50,
                 height: 100,
                 width: 100,
+                borderColor:"black",
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
@@ -522,11 +516,37 @@ const CustomizeVideoComponent = props => {
               resizeMode="contain"
               // onBuffer={this.onBuffer} // Callback when remote video is buffering
               // onError={this.videoError} // Callback when video cannot be loaded
-              style={[videoDimention, {borderWidth: 1}]}
+              style={[
+                videoDimention,
+                {borderWidth: 1, width: screenWidth - 20},
+              ]}
             />
           )}
         </View>
       </TouchableWithoutFeedback>
     </>
+  );
+};
+
+const CustomImageComponent = props => {
+  const [uri, uriUpdater] = useState(props.uri);
+  return (
+    <TouchableNativeFeedback
+      onPress={() => {
+        props.ToSinglePost();
+      }}>
+      <Image
+        source={{
+          uri: uri || '',
+        }}
+        style={{
+          flex: 1,
+          width: '100%',
+          resizeMode: 'contain',
+          minHeight: props.height,
+          minWidth: props.width,
+        }}
+      />
+    </TouchableNativeFeedback>
   );
 };

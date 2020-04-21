@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
-import {StyleSheet, Linking, Platform} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {getDataFromStorage} from '../asyncStorage';
 import LoginSignupPage from './UserLoginSignup/LoginSignupPage';
 import Profile from './Profile';
@@ -63,6 +63,7 @@ function HomePage(props) {
 
   return (
     <Stack.Navigator>
+      
       {props.loginAuthReducer.isSearching ? (
         <Stack.Screen
           name="searching"
