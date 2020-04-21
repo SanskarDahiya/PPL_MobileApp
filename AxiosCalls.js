@@ -26,4 +26,7 @@ export const filterData = data =>
   Axios.post(urlPrefix + 'post/filter', {...data});
 
 export const getUserPosts = (_id, offset) =>
-  Axios.post(urlPrefix + 'post/getPostById', {_id, offset});
+  Axios.post(urlPrefix + 'post/getPostByUserId', {_id, offset});
+
+export const getPostById = _id =>
+  Axios.post(urlPrefix + 'post/getPostById', {_id});

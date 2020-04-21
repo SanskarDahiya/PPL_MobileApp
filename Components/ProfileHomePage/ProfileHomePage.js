@@ -9,9 +9,9 @@ import {
 import {connect} from 'react-redux';
 import FooterBarProfile from './FooterBarProfile';
 import MyAllPosts from './MyAllPosts';
-import {setZIndex} from '../REDUX/actions/zIndexAction';
+import {setZIndex} from '../../REDUX/actions/zIndexAction';
 import BottomFiltersButtons from './BottomFiltersButtons';
-import DelayingScreen from './DelayingScreen';
+import DelayingScreen from '../DelayingScreen';
 
 const ProfileHomePage = props => {
   const [SwipAnimUpload] = useState(new Animated.Value(100));
@@ -23,7 +23,7 @@ const ProfileHomePage = props => {
       toValue:
         val !== 'def' ? val : JSON.stringify(SwipAnimUpload) === '0' ? 100 : 0,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 
@@ -32,7 +32,7 @@ const ProfileHomePage = props => {
       toValue:
         val !== 'def' ? val : JSON.stringify(SwipAnimFilter) === '0' ? 100 : 0,
       duration: 200,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, TextInput} from 'react-native';
-import styles from '../css/styles';
+import styles from '../../css/styles';
 const Cstmtextbox = props => {
   //   console.log(props);
   return (

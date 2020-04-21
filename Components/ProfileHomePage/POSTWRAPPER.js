@@ -8,23 +8,23 @@ import {
   Button,
   TextInput,
 } from 'react-native';
-import styles from '../css/styles';
+import styles from '../../css/styles';
 import Video from 'react-native-video';
 
-import {like_comment} from '../AxiosCalls';
-import {getDataFromStorage} from '../asyncStorage';
+import {like_comment} from '../../AxiosCalls';
+import {getDataFromStorage} from '../../asyncStorage';
 import {connect} from 'react-redux';
-import {updatePostAtIndex} from '../REDUX/actions/mypostAction';
+import {updatePostAtIndex} from '../../REDUX/actions/mypostAction';
 import {TouchableNativeFeedback} from 'react-native-gesture-handler';
-const RNFS = require('react-native-fs');
+import {DownloadVideo, getDownloadedFile} from '../SaveOffline/download';
 
-const USERIMAGE = require('../images/ppl/img_6.png');
+const USERIMAGE = require('../../images/ppl/img_6.png');
 const bottomIcons = [
-  require('../images/ppl/icon_001.png'),
-  require('../images/ppl/icon_004.png'),
-  require('../images/ppl/icon_003.png'),
-  require('../images/ppl/icon_002.png'),
-  require('../images/ppl/icon_003.png'),
+  require('../../images/ppl/icon_001.png'),
+  require('../../images/ppl/icon_004.png'),
+  require('../../images/ppl/icon_003.png'),
+  require('../../images/ppl/icon_002.png'),
+  require('../../images/ppl/icon_003.png'),
 ];
 const screenWidth = Math.round(Dimensions.get('window').width);
 const screenHeight = Math.round(Dimensions.get('window').height);
@@ -43,11 +43,16 @@ const POSTWRAPPER = originalprops => {
 
   // Setting photo height
   let PhotoHeight = 100;
-  if (props.photo)
-    PhotoHeight = (props.photo.height / props.photo.width) * screenWidth - 20;
+  if (props.photo && props.photo.height) {
+    PhotoHeight = (props.photo.height / props.photo.width) * (screenWidth - 20);
+  }
+  let PhotoWidth = screenWidth - 20;
+  // if (props.photo && props.photo.width) {
+  //   PhotoWidth = (props.photo.width / props.photo.height) * screenHeight - 20;
+  // }
   const UpdateDataAtRedux = () => {
     try {
-      if (props.isSinglePost) {
+      if (props.isSinglePost && !props.externalUrl) {
         let data = {...props};
         delete data.isSinglePost;
         delete data.updatePostAtIndex;
@@ -115,6 +120,13 @@ const POSTWRAPPER = originalprops => {
             likesL += 1;
             likes.add(userdata._id);
           }
+          console.log({
+            method: 'like',
+            ...props.likes,
+            length: likesL,
+            data: [...likes],
+          });
+
           like_comment({
             method: 'like',
             ...props.likes,
@@ -132,7 +144,11 @@ const POSTWRAPPER = originalprops => {
           alert('We are working on it.');
           break;
       }
-    } catch (err) {}
+    } catch (err) {
+      if (err.message.toString().search('user data') >= 0) {
+        alert('Please Login');
+      }
+    }
   };
 
   return (
@@ -191,9 +207,9 @@ const POSTWRAPPER = originalprops => {
             flex: 1,
             borderWidth: 1,
             borderColor: 'white',
-            width: '100%',
+            Width: '100%',
             minHeight: 200,
-            // minHeight:100,
+
             backgroundColor: '#f3f3f3',
             justifyContent: 'center',
             alignItems: 'center',
@@ -201,13 +217,18 @@ const POSTWRAPPER = originalprops => {
           },
         ]}>
         <TouchableWithoutFeedback
+          styles={{height: '100%', width: '100%'}}
           onPress={() => {
             ToSinglePost(props._id);
           }}>
           {/* POST IMAGE */}
           {props.photo ? (
             props.photo.type.toString().search('video') >= 0 ? (
-              <CustomizeVideoComponent {...props.photo} />
+              <CustomizeVideoComponent
+                {...props.photo}
+                isSinglePost={props.isSinglePost}
+                ToSinglePost={() => ToSinglePost(props._id)}
+              />
             ) : (
               <Image
                 source={{
@@ -218,6 +239,7 @@ const POSTWRAPPER = originalprops => {
                   width: '100%',
                   resizeMode: 'contain',
                   minHeight: PhotoHeight,
+                  minWidth: PhotoWidth,
                 }}
               />
             )
@@ -240,7 +262,7 @@ const POSTWRAPPER = originalprops => {
             name:
               props.likes && props.likes['length'] >= 10
                 ? props.likes['length'] + ' Likes'
-                : (props.likes['length'] || 0) + ' Like',
+                : ((props.likes && props.likes['length']) || 0) + ' Like',
           },
         ].map((val, id) => (
           <TouchableWithoutFeedback
@@ -253,7 +275,7 @@ const POSTWRAPPER = originalprops => {
           </TouchableWithoutFeedback>
         ))}
       </View>
-      {props.isSinglePost && (
+      {props.isSinglePost && props.comments && props.comments.data && (
         <CommentWrapper
           handelBottomButtons={handelBottomButtons}
           comments={props.comments.data}
@@ -353,7 +375,12 @@ const CommentWrapper = props => {
 
 const CustomizeVideoComponent = props => {
   let refVideo = false;
-  const [isVideoPaused, isVideoPausedUpdater] = useState(false);
+  const [showOverlayScreen, showOverlayScreenUpdater] = useState(
+    props.isSinglePost,
+  );
+  const [videoUri, videoUriUpdater] = useState(props.uri);
+  const [currentVideoTime, currentVideoTimeUpdater] = useState(0);
+  const [isVideoPaused, isVideoPausedUpdater] = useState(true);
   const [videoDimention, videoDimentionUpdater] = useState({
     width: '100%',
     height: '100%',
@@ -365,12 +392,21 @@ const CustomizeVideoComponent = props => {
     videoDimentionUpdater({width: '100%', height: photoHeight});
     console.log(naturalSize, 'onLoad');
   };
-
+  useEffect(() => {
+    if (refVideo) {
+      refVideo.seek(currentVideoTime);
+    }
+  }, [videoUri]);
+  useEffect(() => {
+    showOverlayScreenUpdater(!isVideoPaused);
+  }, [isVideoPaused]);
   const onProgressVideo = ({
     currentTime,
     seekableDuration,
     playableDuration,
   }) => {
+    currentVideoTimeUpdater(currentTime);
+
     currentTime = new Date(currentTime * 1000)
       .toISOString()
       .split('T')[1]
@@ -387,44 +423,65 @@ const CustomizeVideoComponent = props => {
       .split('T')[1]
       .split('.')[0]
       .toString();
-
-    videoTimeProgressUpdater(
-      currentTime + '/' + playableDuration + '//' + seekableDuration,
-    );
+    videoTimeProgressUpdater(currentTime + '/' + seekableDuration);
   };
-  const useStorage4Video = async () => {
-    let filename = props.filename;
-    let videoPath = RNFS.DocumentDirectoryPath + '/' + filename;
-    console.log(videoPath);
 
-    RNFS.exists(videoPath).then(exists => {
-      if (exists) {
-        console.log('Already downloaded');
-      } else {
-        console.log('not found');
-        RNFS.downloadFile({
-          fromUrl: props.uri,
-          toFile: videoPath.replace(/%20/g, '_'),
-          background: true,
-        })
-          .promise.then(res => {
-            console.log('File Downloaded', res);
-          })
-          .catch(err => {
-            console.log('err downloadFile', err);
-          });
-      }
-    });
-  };
   useEffect(() => {
     console.log('123');
-    useStorage4Video();
+    getDownloadedFile(props.filename, (err, data) => {
+      if (data) {
+        videoUriUpdater(data);
+      }
+    });
     return () => {
       console.log('Component unMount');
     };
   }, []);
   return (
     <>
+      {!showOverlayScreen && (
+        <TouchableWithoutFeedback
+          onPress={() => {
+            if (props.isSinglePost) {
+              //We will play video herr
+              console.log('press');
+              isVideoPausedUpdater(!isVideoPaused);
+            } else {
+              props.ToSinglePost();
+            }
+          }}>
+          <View
+            style={{
+              position: 'absolute',
+              borderWidth: 2,
+              borderColor: 'blue',
+              height: '100%',
+              width: '100%',
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 4,
+              backgroundColor: 'rgba(0,0,0,0.7)',
+            }}>
+            <TouchableNativeFeedback
+              style={{
+                borderWidth: 5,
+                borderRadius: 50,
+                height: 100,
+                width: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View>
+                <Text style={{color: 'white'}}>
+                  {isVideoPaused ? 'Click to play' : 'click to pause'}
+                </Text>
+              </View>
+            </TouchableNativeFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+
       <TouchableWithoutFeedback
         onPress={() => {
           isVideoPausedUpdater(!isVideoPaused);
@@ -437,66 +494,37 @@ const CustomizeVideoComponent = props => {
               flex: 1,
             },
           ]}>
-          <View
-            style={{
-              position: 'absolute',
-              borderWidth: 2,
-              borderColor: 'blue',
-              height: '50%',
-              width: '100%',
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 4,
-              backgroundColor: 'rgba(0,0,0,0.7)',
-            }}>
-            <View>
-              <Text>{isVideoPaused ? 'Click to play' : 'click to pause'}</Text>
-            </View>
-            <TouchableNativeFeedback
-              onProgress={() => {
-                console.log('press');
+          {props.isSinglePost && (
+            <Video
+              source={{uri: videoUri, catch: true}} // Can be a URL or a local file.
+              ref={ref => {
+                refVideo = ref;
               }}
-              style={{borderWidth: 5}}>
-              <View>
-                <Text style={{color: 'white'}}>Time: {videoTimeProgress}</Text>
-              </View>
-            </TouchableNativeFeedback>
-          </View>
-          <Video
-            source={{uri: RNFS.DocumentDirectoryPath + '/' + props.filename}} // Can be a URL or a local file.
-            ref={ref => {
-              refVideo = ref;
-            }}
-            onBuffer={() => {
-              console.log('buffer');
-            }}
-            onError={() => {
-              console.log('Vide Error');
-            }}
-            bufferConfig={{
-              minBufferMs: 15000,
-              maxBufferMs: 50000,
-              bufferForPlaybackMs: 2500,
-              bufferForPlaybackAfterRebufferMs: 5000,
-            }}
-            // controls={true}
-            onEnd={() => {
-              console.log('Video ENd here');
-              isVideoPausedUpdater(true);
-              refVideo && refVideo.seek(0);
-            }}
-            paused={isVideoPaused}
-            onProgress={onProgressVideo}
-            onLoad={onLoadVideo}
-            onLoadStart={() => {
-              console.log('onLoadStart');
-            }}
-            resizeMode="contain"
-            // onBuffer={this.onBuffer} // Callback when remote video is buffering
-            // onError={this.videoError} // Callback when video cannot be loaded
-            style={[videoDimention, {borderWidth: 1}]}
-          />
+              onBuffer={() => {
+                console.log('buffer');
+              }}
+              onError={() => {
+                console.log('Vide Error');
+              }}
+              // controls={true}
+              onEnd={() => {
+                console.log('Video ENd here');
+                isVideoPausedUpdater(true);
+                refVideo && refVideo.seek(0);
+              }}
+              paused={isVideoPaused}
+              onProgress={onProgressVideo}
+              onLoad={onLoadVideo}
+              onLoadStart={() => {
+                console.log('onLoadStart');
+                isVideoPausedUpdater(false);
+              }}
+              resizeMode="contain"
+              // onBuffer={this.onBuffer} // Callback when remote video is buffering
+              // onError={this.videoError} // Callback when video cannot be loaded
+              style={[videoDimention, {borderWidth: 1}]}
+            />
+          )}
         </View>
       </TouchableWithoutFeedback>
     </>

@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, Button} from 'react-native';
-import styles from '../css/styles';
+import styles from '../../css/styles';
 import Cstmtextbox from './Cstmtextbox';
-import {SignupCall} from '../AxiosCalls';
+import {SignupCall} from '../../AxiosCalls';
 import {connect} from 'react-redux';
-import {setZIndex} from '../REDUX/actions/zIndexAction';
-import {addDataToStorage} from '../asyncStorage';
-import {userLoggedInAction} from '../REDUX/actions/loginSingupAction';
-import {encryptPassword} from '../Encryption';
+import {setZIndex} from '../../REDUX/actions/zIndexAction';
+import {addDataToStorage} from '../../asyncStorage';
+import {userLoggedInAction} from '../../REDUX/actions/loginSingupAction';
+import {encryptPassword} from '../../Encryption';
 
 function Login(props) {
   let isUserLogging = false;

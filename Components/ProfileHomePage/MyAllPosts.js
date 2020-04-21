@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import POSTWRAPPER from './POSTWRAPPER';
 import {connect} from 'react-redux';
-import {filterData} from '../AxiosCalls';
-import {setZIndex} from '../REDUX/actions/zIndexAction';
-import {setAllPost} from '../REDUX/actions/mypostAction';
-import {PostFilterAction} from '../REDUX/actions/postFilterMenu';
+import {filterData} from '../../AxiosCalls';
+import {setZIndex} from '../../REDUX/actions/zIndexAction';
+import {setAllPost} from '../../REDUX/actions/mypostAction';
+import {PostFilterAction} from '../../REDUX/actions/postFilterMenu';
 const MobileHeight = Dimensions.get('window').height;
 
 let isToTop = true,

@@ -6,10 +6,10 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {setAllPost} from '../REDUX/actions/mypostAction';
-import {filterData} from '../AxiosCalls';
-import {setZIndex} from '../REDUX/actions/zIndexAction';
-import {PostFilterAction} from '../REDUX/actions/postFilterMenu';
+import {setAllPost} from '../../REDUX/actions/mypostAction';
+import {filterData} from '../../AxiosCalls';
+import {setZIndex} from '../../REDUX/actions/zIndexAction';
+import {PostFilterAction} from '../../REDUX/actions/postFilterMenu';
 
 const BottomFiltersButtons = props => {
   const updatePost = data => {

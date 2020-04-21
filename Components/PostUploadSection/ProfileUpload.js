@@ -12,10 +12,10 @@ import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
 import DocumentPicker from 'react-native-document-picker';
 
-import {PostUploadCall} from '../AxiosCalls';
-import {getDataFromStorage} from '../asyncStorage';
-import {setZIndex} from '../REDUX/actions/zIndexAction';
-import DelayingScreen from './DelayingScreen';
+import {PostUploadCall} from '../../AxiosCalls';
+import {getDataFromStorage} from '../../asyncStorage';
+import {setZIndex} from '../../REDUX/actions/zIndexAction';
+import DelayingScreen from '../DelayingScreen';
 const AllCategory = ['Rabbit', 'DOG', 'RAT'];
 
 const UploadPostTopPortion = props => {

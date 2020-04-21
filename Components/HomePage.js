@@ -1,8 +1,8 @@
 import 'react-native-gesture-handler';
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, Linking, Platform} from 'react-native';
 import {getDataFromStorage} from '../asyncStorage';
-import LoginSignupPage from './LoginSignupPage';
+import LoginSignupPage from './UserLoginSignup/LoginSignupPage';
 import Profile from './Profile';
 import {connect} from 'react-redux';
 import {setZIndex} from '../REDUX/actions/zIndexAction';
@@ -12,6 +12,7 @@ import {
   userLoggedOutAction,
   userLoggedInAction,
 } from '../REDUX/actions/loginSingupAction';
+import singlepost from './DeepLinking/singlepost';
 
 const Stack = createStackNavigator();
 const RESET_REDUX_DATA = () => {
@@ -59,6 +60,7 @@ function HomePage(props) {
   if (props.loginAuthReducer.isSearching) {
     props.setZIndex(10);
   }
+
   return (
     <Stack.Navigator>
       {props.loginAuthReducer.isSearching ? (
@@ -79,6 +81,11 @@ function HomePage(props) {
         // Login Page
         <Stack.Screen name="PPL LOGIN/SIGNUP" component={LoginSignupPage} />
       )}
+      <Stack.Screen
+        name="singlepost_id"
+        component={singlepost}
+        initialParams={{isAllowed: props.loginAuthReducer.isAllowed}}
+      />
     </Stack.Navigator>
   );
 }

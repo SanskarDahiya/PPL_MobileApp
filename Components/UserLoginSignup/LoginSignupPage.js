@@ -10,7 +10,7 @@ import {
 import SignIn from './SignIN';
 import Signup from './Signup';
 import {connect} from 'react-redux';
-import DelayingScreen from './DelayingScreen';
+import DelayingScreen from '../DelayingScreen';
 
 const LoginSignupPage = props => {
   const [mainBtn, mainBtnUpdate] = useState(true);
