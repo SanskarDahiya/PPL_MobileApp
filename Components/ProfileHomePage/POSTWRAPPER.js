@@ -8,6 +8,7 @@ import {
   Button,
   TextInput,
   TouchableNativeFeedback,
+  TouchableHighlight,
 } from 'react-native';
 import styles from '../../css/styles';
 import Video from 'react-native-video';
@@ -209,7 +210,7 @@ const POSTWRAPPER = originalprops => {
             borderColor: 'white',
             Width: '100%',
             minHeight: 200,
-
+            minWidth: screenWidth / 2,
             backgroundColor: '#f3f3f3',
             justifyContent: 'center',
             alignItems: 'center',
@@ -238,7 +239,9 @@ const POSTWRAPPER = originalprops => {
             />
           )
         ) : (
-          <View />
+          <View>
+            <Text>No Image</Text>
+          </View>
         )}
       </View>
       {/* BOTTOM BUTTONS */}
@@ -433,7 +436,7 @@ const CustomizeVideoComponent = props => {
   return (
     <>
       {!showOverlayScreen && (
-        <TouchableWithoutFeedback
+        <TouchableNativeFeedback
           onPress={() => {
             if (props.isSinglePost) {
               //We will play video herr
@@ -456,27 +459,25 @@ const CustomizeVideoComponent = props => {
               zIndex: 4,
               backgroundColor: 'rgba(0,0,0,0.7)',
             }}>
-            <TouchableNativeFeedback
+            <View
               style={{
                 borderWidth: 5,
                 borderRadius: 50,
                 height: 100,
                 width: 100,
-                borderColor:"black",
+                borderColor: 'black',
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              <View>
-                <Text style={{color: 'white'}}>
-                  {isVideoPaused ? 'Click to play' : 'click to pause'}
-                </Text>
-              </View>
-            </TouchableNativeFeedback>
+              <Text style={{color: 'white'}}>
+                {isVideoPaused ? 'Click to play' : 'click to pause'}
+              </Text>
+            </View>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableNativeFeedback>
       )}
 
-      <TouchableWithoutFeedback
+      <TouchableNativeFeedback
         onPress={() => {
           isVideoPausedUpdater(!isVideoPaused);
           console.log('press', isVideoPaused);
@@ -523,30 +524,48 @@ const CustomizeVideoComponent = props => {
             />
           )}
         </View>
-      </TouchableWithoutFeedback>
+      </TouchableNativeFeedback>
     </>
   );
 };
 
 const CustomImageComponent = props => {
   const [uri, uriUpdater] = useState(props.uri);
+  const [setDisplay, setDisplayUpdater] = useState('none');
+  const [setText, setTextUpdater] = useState('Loading Image');
   return (
-    <TouchableNativeFeedback
-      onPress={() => {
-        props.ToSinglePost();
-      }}>
-      <Image
-        source={{
-          uri: uri || '',
-        }}
-        style={{
-          flex: 1,
-          width: '100%',
-          resizeMode: 'contain',
-          minHeight: props.height,
-          minWidth: props.width,
-        }}
-      />
-    </TouchableNativeFeedback>
+    <View>
+      <TouchableHighlight
+        onPress={() => {
+          props.ToSinglePost();
+        }}>
+        <>
+          <Image
+            source={{
+              uri: uri || '',
+            }}
+            onLoad={() => {
+              setDisplayUpdater('flex');
+              // console.log('image load');
+            }}
+            onError={err => {
+              console.log('Error to load Image');
+              setTextUpdater('Error To Load Image');
+            }}
+            style={[
+              {
+                flex: 1,
+                width: '100%',
+                resizeMode: 'contain',
+                minHeight: props.height,
+                minWidth: props.width,
+                display: setDisplay,
+              },
+            ]}
+          />
+          {setDisplay === 'none' && <Text>{setText}</Text>}
+        </>
+      </TouchableHighlight>
+    </View>
   );
 };

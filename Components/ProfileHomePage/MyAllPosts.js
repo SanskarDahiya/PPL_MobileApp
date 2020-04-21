@@ -107,22 +107,17 @@ const MyAllPosts = props => {
     getNewPosts(0);
   }, []);
 
-  return (
-    <View>
-      <Text>all posts</Text>
-      <FlatList
-        data={props.getAllPosts}
-        renderItem={({index, item}) => {
-          console.log(index);
-
-          return (
-            <POSTWRAPPER {...item} ToSinglePost={props.navigation.navigate} />
-          );
-        }}
-        keyExtractor={item => item._id}
-      />
-    </View>
-  );
+  // return (
+  //   <View>
+  //     <FlatList
+  //       data={props.getAllPosts}
+  //       renderItem={({index, item}) => (
+  //         <POSTWRAPPER {...item} ToSinglePost={props.navigation.navigate} />
+  //       )}
+  //       keyExtractor={item => item._id}
+  //     />
+  //   </View>
+  // );
 
   return (
     <View>
